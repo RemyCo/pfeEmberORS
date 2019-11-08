@@ -55,7 +55,7 @@ export default Component.extend({
         this.set("polyline", this.get("polyline").slice(0, this.get('previousIndex').pop()));
       }
     },
-   updatePolyline(e) {
+    updatePolyline(e) {
       let url;
       let ctx = this;
       if (!this.get("firstClick")) {
@@ -106,6 +106,16 @@ export default Component.extend({
             }
           }
         });
+      }
+    },
+    textChooseAddress(text){
+      let url;
+      url = "http://nominatim.openstreetmap.org/search?q="+text.replace(" ", "+")+"&format=xml&polygon=1&addressdetails=1";
+      fetch(url)
+      .then(function(response) { return response.json(); })
+      .then(function(data){
+        lat: data.lat;
+        lon: data.lon;
       }
     },
   },
