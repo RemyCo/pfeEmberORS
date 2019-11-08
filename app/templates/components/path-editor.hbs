@@ -1,0 +1,34 @@
+{{! First div to display the HTML fragment provided to the component }}
+<div>{{yield}}</div>
+{{! Second div to display the current lattitude and longitude with binding attributes }}
+<div>
+ <p>Latitude: <code>{{lat}}</code> / Longitude: <code>{{lng}}</code></p>
+</div>
+{{! Third div to display the core of the component: buttons + map }}
+<div class="flex-none layout-row">
+ {{! left column to contain the button to interact with the path drawn on top of the map }}
+ <div class="layout-column layout-align-center-center">
+   {{! Button to reset the path}}
+   {{#paper-button iconButton=true onClick=(action "deleteAll")}}{{paper-icon "cancel"}}{{/paper-button}}
+   {{! Button to delete just the last point added to path }}
+   {{#paper-button iconButton=true disabled=isEnabled onClick=(action "deleteLastPoint")}}{{paper-icon "reply"}}{{/paper-button}}
+   {{! Button to delete the last segment added to the path }}
+   {{#paper-button iconButton=true disabled=isEnabled onClick=(action "deleteLastSegment")}}{{paper-icon "reply all"}}{{/paper-button}}
+   <hr/>
+   {{! Display the full distance in km for the currently drawn path thanks to the bind attribute }}
+   <div>{{distance}}</div>
+ </div>
+ {{! Right column to contain the map}}
+ <div class="flex">
+   {{! Event click and move are mapped on Ember action }}
+   {{#leaflet-map lat=lat lng=lng zoom=zoom onMoveend=(action "updateCenter") onClick=(action "updatePolyline")}}
+     {{! Map layer is using OpenStreetMap data }}
+     {{tile-layer url="http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"}}
+     {{! Marker layer is composed of a marker for the first point binded with startPoint attribute and a polyline layer binded with polyline attribute }}
+     {{#if firstClick}}
+       {{marker-layer location=startPoint}}
+     {{/if}}
+     {{polyline-layer locations=polyline}}
+   {{/leaflet-map}}
+ </div>
+</div>
