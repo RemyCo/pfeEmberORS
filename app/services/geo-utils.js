@@ -1,5 +1,4 @@
 // app/services/geo-utils.js
-import Ember from 'ember';
 import Service from '@ember/service';
 
 export default Service.extend({
