@@ -67,8 +67,7 @@ export default Component.extend({
             ctx.get("polyline").pushObject({
               lat: data.waypoints[0].location[1],
               lon: data.waypoints[0].location[0],
-              alt: 0,
-              dist: 0
+              alt: 0
             });
             ctx.set("firstClick", true);
           }
