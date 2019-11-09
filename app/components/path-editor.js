@@ -19,6 +19,9 @@ export default Component.extend({
   // Keep track of the indexes of the start of the different segments of the polylines
   previousIndex: [],
 
+  firstAddress: "",
+  secondAddress: "",
+
   isEnabled: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
     if (this.get('polyline').length > 1){
       return false;
@@ -64,6 +67,7 @@ export default Component.extend({
         .then(function(response) { return response.json(); })
         .then(function(data){
           if (data.code == "Ok") {
+            console.log(data);
             ctx.get("polyline").pushObject({
               lat: data.waypoints[0].location[1],
               lon: data.waypoints[0].location[0],
@@ -77,16 +81,13 @@ export default Component.extend({
         let prevLon = this.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
         // Calling OSRM for a polyline segment joining the given two coordinates
         url = "/route/v1/biking/"+prevLon+","+prevLat+";"+e.latlng.lng+","+e.latlng.lat+"?steps=true&geometries=geojson";
-        console.log(url);
         fetch(url)
           .then(function(response) { return response.json(); })
           .then(function(data){
-            console.log(data);
           if (data.code == "Ok") {
             ctx.get('previousIndex').push(ctx.get('polyline').length+1);
             // Only consider the first route
             let dist = data.routes[0].legs[0].distance;
-            console.log(dist);
             let dur = data.routes[0].duration;
             for (var i = 1; i < data.routes[0].geometry.coordinates.length; i++) {
               // Compute distance between coordinates
@@ -108,15 +109,25 @@ export default Component.extend({
         });
       }
     },
-    textChooseAddress(text){
-      let url;
-      url = "http://nominatim.openstreetmap.org/search?q="+text.replace(" ", "+")+"&format=xml&polygon=1&addressdetails=1";
-      fetch(url)
+    textChooseAddress(){
+      let url1;
+      // let url2;
+      let ctx = this;
+      url1 = "http://nominatim.openstreetmap.org/search?q="+ this.firstAddress+"&format=json&polygon=1&addressdetails=1";
+      // url2 = "http://nominatim.openstreetmap.org/search?q="+this.secondAddress.replace(" ", "+")+"&format=json&polygon=1&addressdetails=1";
+      console.log(url1);
+      // console.log(url2);
+      fetch(url1)
       .then(function(response) { return response.json(); })
       .then(function(data){
-        lat: data.lat;
-        lon: data.lon;
-      }
+        console.log(data);
+        ctx.get("polyline").pushObject({
+          lat: data[0].lat,
+          lon: data[0].lon,
+          alt: 0
+        });
+        ctx.set("firstClick", true);
+      });
     },
   },
 });
