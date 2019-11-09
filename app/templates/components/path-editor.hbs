@@ -1,20 +1,19 @@
 {{! Third div to display the core of the component: buttons + map }}
-<div class="flex-none layout-row">
+<div class="window">
  {{! left column to contain the button to interact with the path drawn on top of the map }}
- <div class="layout-column layout-align-center-center">
+ <div class="tool">
    {{! Button to reset the path}}
    {{#paper-button iconButton=true onClick=(action "deleteAll")}}{{paper-icon "cancel"}}{{/paper-button}}
    {{! Button to delete just the last point added to path }}
    {{#paper-button iconButton=true disabled=isEnabled onClick=(action "deleteLastPoint")}}{{paper-icon "reply"}}{{/paper-button}}
    {{! Button to delete the last segment added to the path }}
    {{#paper-button iconButton=true disabled=isEnabled onClick=(action "deleteLastSegment")}}{{paper-icon "reply all"}}{{/paper-button}}
-   <hr/>
    {{! Display the full distance in km for the currently drawn path thanks to the bind attribute }}
-   <div>{{distance}}</div>
-   <div>{{duration}}</div>
+   {{distance}}
+   {{duration}}
  </div>
  {{! Right column to contain the map}}
- <div class="flex">
+ <div class="map">
    {{! Event click and move are mapped on Ember action }}
    {{#leaflet-map lat=lat lng=lng zoom=zoom onMoveend=(action "updateCenter") onClick=(action "updatePolyline")}}
      {{! Map layer is using OpenStreetMap data }}
