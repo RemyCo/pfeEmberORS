@@ -49,6 +49,8 @@ export default Component.extend({
     deleteAll() {
         this.set("polyline", A([]));
         this.set('firstClick', false);
+        this.set('firstAddress', "");
+        this.set('secondAddress', "");
       },
     deleteLastPoint() {
       this.get("polyline").popObject();
@@ -73,6 +75,7 @@ export default Component.extend({
               lon: data.waypoints[0].location[0],
               alt: 0
             });
+            ctx.set("firstAddress", data.waypoints[0].name);
             ctx.set("firstClick", true);
           }
         });
@@ -109,25 +112,69 @@ export default Component.extend({
         });
       }
     },
-    textChooseAddress(){
-      let url1;
-      // let url2;
+    searchFirstAddress(){
       let ctx = this;
-      url1 = "http://nominatim.openstreetmap.org/search?q="+ this.firstAddress+"&format=json&polygon=1&addressdetails=1";
-      // url2 = "http://nominatim.openstreetmap.org/search?q="+this.secondAddress.replace(" ", "+")+"&format=json&polygon=1&addressdetails=1";
-      console.log(url1);
-      // console.log(url2);
+      let url1 = "http://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
       fetch(url1)
       .then(function(response) { return response.json(); })
       .then(function(data){
-        console.log(data);
-        ctx.get("polyline").pushObject({
-          lat: data[0].lat,
-          lon: data[0].lon,
-          alt: 0
+        let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
+        fetch(url)
+        .then(function(response) { return response.json(); })
+        .then(function(data){
+          if (data.code == "Ok") {
+            console.log(data);
+            ctx.get("polyline").pushObject({
+              lat: data.waypoints[0].location[1],
+              lon: data.waypoints[0].location[0],
+              alt: 0
+            });
+          ctx.set("firstClick", true);
+          }
         });
-        ctx.set("firstClick", true);
       });
+    },
+    searchSecondAddress(){
+      let ctx = this;
+      if (this.get("firstClick")){
+        let url2 = "http://nominatim.openstreetmap.org/search?q=" + this.secondAddress + "&format=json&polygon=1&addressdetails=1";
+        fetch(url2)
+        .then(function(response) { return response.json(); })
+        .then(function(data){
+          console.log(data);
+          console.log(this.get('polyline'));
+          let prevLat = this.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
+          let prevLon = this.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
+          // Calling OSRM for a polyline segment joining the given two coordinates
+          let url = "/route/v1/biking/"+prevLon+","+prevLat+";"+data[0].lon+","+data[0].lat+"?steps=true&geometries=geojson";
+          fetch(url)
+            .then(function(response) { return response.json(); })
+            .then(function(data){
+            if (data.code == "Ok") {
+              ctx.get('previousIndex').push(ctx.get('polyline').length+1);
+              // Only consider the first route
+              let dist = data.routes[0].legs[0].distance;
+              let dur = data.routes[0].duration;
+              for (var i = 1; i < data.routes[0].geometry.coordinates.length; i++) {
+                // Compute distance between coordinates
+                /*
+                let dist = this.geoUtils.haversine(prevLat, prevLon,
+                  data.routes[0].geometry.coordinates[i][1], data.routes[0].geometry.coordinates[i][0]);
+                  */
+                ctx.get("polyline").pushObject({
+                  lat: data.routes[0].geometry.coordinates[i][1],
+                  lon: data.routes[0].geometry.coordinates[i][0],
+                  alt: 0,
+                  dist:dist,
+                  dur:dur
+                });
+                prevLat = data.routes[0].geometry.coordinates[i][1];
+                prevLon = data.routes[0].geometry.coordinates[i][0];
+              }
+            }
+          });
+        });
+      }
     },
   },
 });

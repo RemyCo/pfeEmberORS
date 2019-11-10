@@ -4,8 +4,9 @@
   <div class="tool">
     <div class="input-address">
       {{paper-input placeholder="Address" type="text" value=firstAddress onChange=(action (mut firstAddress)) icon="place"}}
+      {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
       {{paper-input placeholder="Address" type="text" value=secondAddress onChange=(action (mut secondAddress)) icon="place"}}
-      {{#paper-button iconButton=true onClick=(action "textChooseAddress")}}{{paper-icon "search"}}{{/paper-button}}
+      {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
     </div>
     {{! Button to reset the path}}
     {{#paper-button iconButton=true onClick=(action "deleteAll")}}{{paper-icon "cancel"}}{{/paper-button}}
