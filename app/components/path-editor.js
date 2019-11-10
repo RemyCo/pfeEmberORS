@@ -22,6 +22,7 @@ export default Component.extend({
   firstAddress: "",
   secondAddress: "",
 
+
   isEnabled: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
     if (this.get('polyline').length > 1){
       return false;
@@ -88,6 +89,7 @@ export default Component.extend({
           .then(function(response) { return response.json(); })
           .then(function(data){
           if (data.code == "Ok") {
+            console.log(data);
             ctx.get('previousIndex').push(ctx.get('polyline').length+1);
             // Only consider the first route
             let dist = data.routes[0].legs[0].distance;
@@ -108,6 +110,7 @@ export default Component.extend({
               prevLat = data.routes[0].geometry.coordinates[i][1];
               prevLon = data.routes[0].geometry.coordinates[i][0];
             }
+            ctx.set("secondAddress", data.waypoints[1].name);
           }
         });
       }
