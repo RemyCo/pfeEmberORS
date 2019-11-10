@@ -112,6 +112,7 @@ export default Component.extend({
         });
       }
     },
+    // On Nominatim, we are able to make a request every seconds, so we can't have a research at the same time for the 2 addresses
     searchFirstAddress(){
       let ctx = this;
       let url1 = "http://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
@@ -141,10 +142,8 @@ export default Component.extend({
         fetch(url2)
         .then(function(response) { return response.json(); })
         .then(function(data){
-          console.log(data);
-          console.log(this.get('polyline'));
-          let prevLat = this.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
-          let prevLon = this.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
+          let prevLat = ctx.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
+          let prevLon = ctx.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
           // Calling OSRM for a polyline segment joining the given two coordinates
           let url = "/route/v1/biking/"+prevLon+","+prevLat+";"+data[0].lon+","+data[0].lat+"?steps=true&geometries=geojson";
           fetch(url)
