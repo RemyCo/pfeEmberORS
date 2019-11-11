@@ -42,7 +42,7 @@ export default Component.extend({
 
   actions: {
     // The different action are rather self explanatory
-    updateCenter(e) {
+    updateCenter(e){
       let center = e.target.getCenter();
       this.set('lat', center.lat);
       this.set('lng', center.lng);
@@ -70,7 +70,6 @@ export default Component.extend({
         .then(function(response) { return response.json(); })
         .then(function(data){
           if (data.code == "Ok") {
-            console.log(data);
             ctx.get("polyline").pushObject({
               lat: data.waypoints[0].location[1],
               lon: data.waypoints[0].location[0],
@@ -89,7 +88,6 @@ export default Component.extend({
           .then(function(response) { return response.json(); })
           .then(function(data){
           if (data.code == "Ok") {
-            console.log(data);
             ctx.get('previousIndex').push(ctx.get('polyline').length+1);
             // Only consider the first route
             let dist = data.routes[0].legs[0].distance;
@@ -118,8 +116,10 @@ export default Component.extend({
     // On Nominatim, we are able to make a request every seconds, so we can't have a research at the same time for the 2 addresses
     searchFirstAddress(){
       let ctx = this;
+      ctx.set("firstClick", false);
       let url1 = "http://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
-      fetch(url1)
+      let latitude, longitude;
+      fetch(url1)             // Nomintatim does not work on Safari because of CORS
       .then(function(response) { return response.json(); })
       .then(function(data){
         let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
@@ -127,13 +127,16 @@ export default Component.extend({
         .then(function(response) { return response.json(); })
         .then(function(data){
           if (data.code == "Ok") {
-            console.log(data);
+            latitude = data.waypoints[0].location[1];
+            longitude = data.waypoints[0].location[0]
             ctx.get("polyline").pushObject({
-              lat: data.waypoints[0].location[1],
-              lon: data.waypoints[0].location[0],
+              lat: latitude,
+              lon: longitude,
               alt: 0
             });
           ctx.set("firstClick", true);
+          ctx.set("lat", latitude);
+          ctx.set("lng", longitude);
           }
         });
       });
@@ -142,7 +145,7 @@ export default Component.extend({
       let ctx = this;
       if (this.get("firstClick")){
         let url2 = "http://nominatim.openstreetmap.org/search?q=" + this.secondAddress + "&format=json&polygon=1&addressdetails=1";
-        fetch(url2)
+        fetch(url2)             // Nomintatim does not work on Safari because of CORS
         .then(function(response) { return response.json(); })
         .then(function(data){
           let prevLat = ctx.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
