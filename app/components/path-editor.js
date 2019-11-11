@@ -43,6 +43,9 @@ export default Component.extend({
   endPoint: computed('polyline', function () {
     return this.get('polyline').get('lastObject');
   }),
+  middlePoint: computed('polyline', function () {
+    return this.get('polyline').objectAt(this.get('polyline').length/2);
+  }),
 
   actions: {
     // The different action are rather self explanatory
