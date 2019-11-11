@@ -23,7 +23,6 @@ export default Component.extend({
   firstAddress: "",
   secondAddress: "",
 
-
   isEnabled: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
     if (this.get('polyline').length > 1){
       return false;
@@ -39,6 +38,10 @@ export default Component.extend({
 
   startPoint: computed('polyline', function () {
     return this.get('polyline').get('firstObject');
+  }),
+
+  endPoint: computed('polyline', function () {
+    return this.get('polyline').get('lastObject');
   }),
 
   actions: {
@@ -66,7 +69,7 @@ export default Component.extend({
       }
     },
     */
-   
+
     updatePolyline(e) {
       let url;
       let ctx = this;
@@ -85,7 +88,7 @@ export default Component.extend({
             ctx.set("firstClick", true);
           }
         });
-      } else {
+      } else if (!this.get("lastClick")){
         let prevLat = this.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
         let prevLon = this.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
         // Calling OSRM for a polyline segment joining the given two coordinates
@@ -115,6 +118,7 @@ export default Component.extend({
               prevLon = data.routes[0].geometry.coordinates[i][0];
             }
             ctx.set("secondAddress", data.waypoints[1].name);
+            ctx.set("lastClick", true);
           }
         });
       }
@@ -149,7 +153,7 @@ export default Component.extend({
     },
     searchSecondAddress(){
       let ctx = this;
-      if (this.get("firstClick")){
+      if (this.get("firstClick" && !this.get("lastClick"))){
         let url2 = "http://nominatim.openstreetmap.org/search?q=" + this.secondAddress + "&format=json&polygon=1&addressdetails=1";
         fetch(url2)             // Nomintatim does not work on Safari because of CORS
         .then(function(response) { return response.json(); })
@@ -182,6 +186,7 @@ export default Component.extend({
                 prevLat = data.routes[0].geometry.coordinates[i][1];
                 prevLon = data.routes[0].geometry.coordinates[i][0];
               }
+            ctx.set("lastClick", true);
             }
           });
         });

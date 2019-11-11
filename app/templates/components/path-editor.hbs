@@ -2,7 +2,7 @@
 <div class="window">
   {{! left column to contain the button to interact with the path drawn on top of the map }}
   <div class="tool">
-    
+
     {{paper-input placeholder="Address" type="text" value=firstAddress onChange=(action (mut firstAddress)) icon="place"}}
     {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
     {{paper-input placeholder="Address" type="text" value=secondAddress onChange=(action (mut secondAddress)) icon="place"}}
@@ -29,6 +29,9 @@
       {{! Marker layer is composed of a marker for the first point binded with startPoint attribute and a polyline layer binded with polyline attribute }}
       {{#if firstClick}}
         {{marker-layer location=startPoint}}
+      {{/if}}
+      {{#if lastClick}}
+        {{marker-layer location=endPoint}}
       {{/if}}
       {{polyline-layer locations=polyline}}
     {{/leaflet-map}}
