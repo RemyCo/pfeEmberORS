@@ -1,15 +1,40 @@
-@import 'ember-paper';
+@import "ember-paper";
 
 .leaflet-container {
-    width:100vw;
-    height: 100vh;
-    z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
 }
 
 .tool {
-    position: fixed;
-    text-align: center;
-    right: 0;
-    left: 0;
-    z-index: 1;
+  position: fixed;
+  text-align: center;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+md-input-container {
+  margin: 0;
+}
+
+#ember237 {
+  display: block;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+
+@media only screen and (min-width: 1024px) {
+  .tool {
+    bottom: auto;
+  }
+
+  #ember237 {
+    display: unset;
+    right: unset;
+    left: unset;
+    margin: unset;
+  }
 }
