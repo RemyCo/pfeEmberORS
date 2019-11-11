@@ -16,6 +16,7 @@ export default Component.extend({
   polyline: A([]),
   // Boolean indicating if the target for next action is the starter marker or a polyline
   firstClick: false,
+  lastClick: false,
   // Keep track of the indexes of the start of the different segments of the polylines
   previousIndex: [],
 
@@ -50,9 +51,12 @@ export default Component.extend({
     deleteAll() {
         this.set("polyline", A([]));
         this.set('firstClick', false);
+        this.set('lastClick', false);
         this.set('firstAddress', "");
         this.set('secondAddress', "");
       },
+
+    /*
     deleteLastPoint() {
       this.get("polyline").popObject();
     },
@@ -61,6 +65,8 @@ export default Component.extend({
         this.set("polyline", this.get("polyline").slice(0, this.get('previousIndex').pop()));
       }
     },
+    */
+   
     updatePolyline(e) {
       let url;
       let ctx = this;
