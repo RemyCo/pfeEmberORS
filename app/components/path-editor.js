@@ -44,7 +44,7 @@ export default Component.extend({
     return this.get('polyline').get('lastObject');
   }),
   middlePoint: computed('polyline', function () {
-    return this.get('polyline').objectAt(this.get('polyline').length/2);
+    return this.get('polyline').objectAt(Math.round(this.get('polyline').length/2));
   }),
 
   actions: {
@@ -159,31 +159,34 @@ export default Component.extend({
         this.set("polyline", A([]));
         this.set('firstClick', false);
         this.set('lastClick', false);
-        let url1 = "https://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
-        let latitude, longitude;
-        fetch(url1)             // Nomintatim does not work on Safari because of CORS
-        .then(function(response) { return response.json(); })
-        .then(function(data){
-          let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
-          fetch(url)
+        if (!this.get("firstClick")){
+          let url1 = "https://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
+          let latitude, longitude;
+          fetch(url1)             // Nomintatim does not work on Safari because of CORS
           .then(function(response) { return response.json(); })
           .then(function(data){
-            if (data.code == "Ok") {
-              latitude = data.waypoints[0].location[1];
-              longitude = data.waypoints[0].location[0]
-              ctx.get("polyline").pushObject({
-                lat: latitude,
-                lon: longitude,
-                alt: 0
-              });
-            ctx.set("firstClick", true);
-            ctx.set("lat", latitude);
-            ctx.set("lng", longitude);
-            }
+            let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
+            fetch(url)
+            .then(function(response) { return response.json(); })
+            .then(function(data){
+              if (data.code == "Ok") {
+                latitude = data.waypoints[0].location[1];
+                longitude = data.waypoints[0].location[0]
+                ctx.get("polyline").pushObject({
+                  lat: latitude,
+                  lon: longitude,
+                  alt: 0
+                });
+              ctx.set("firstClick", true);
+              ctx.set("lat", latitude);
+              ctx.set("lng", longitude);
+              }
+            });
           });
-        });
+        }
       }
     },
+
     searchSecondAddress(){
       let ctx = this;
       if (this.get("firstClick")){
@@ -227,42 +230,7 @@ export default Component.extend({
         } else {
           ctx.set("polyline", A([ctx.get("polyline").firstObject]));
           ctx.set("lastClick", false);
-          let url2 = "https://nominatim.openstreetmap.org/search?q=" + this.secondAddress + "&format=json&polygon=1&addressdetails=1";
-          fetch(url2)             // Nomintatim does not work on Safari because of CORS
-          .then(function(response) { return response.json(); })
-          .then(function(data){
-            let prevLat = ctx.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
-            let prevLon = ctx.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
-            // Calling OSRM for a polyline segment joining the given two coordinates
-            let url = "/route/v1/biking/"+prevLon+","+prevLat+";"+data[0].lon+","+data[0].lat+"?steps=true&geometries=geojson";
-            fetch(url)
-              .then(function(response) { return response.json(); })
-              .then(function(data){
-              if (data.code == "Ok") {
-                ctx.get('previousIndex').push(ctx.get('polyline').length+1);
-                // Only consider the first route
-                let dist = data.routes[0].legs[0].distance;
-                let dur = data.routes[0].duration;
-                for (var i = 1; i < data.routes[0].geometry.coordinates.length; i++) {
-                  // Compute distance between coordinates
-                  /*
-                  let dist = this.geoUtils.haversine(prevLat, prevLon,
-                    data.routes[0].geometry.coordinates[i][1], data.routes[0].geometry.coordinates[i][0]);
-                    */
-                  ctx.get("polyline").pushObject({
-                    lat: data.routes[0].geometry.coordinates[i][1],
-                    lon: data.routes[0].geometry.coordinates[i][0],
-                    alt: 0,
-                    dist:dist,
-                    dur:dur
-                  });
-                  prevLat = data.routes[0].geometry.coordinates[i][1];
-                  prevLon = data.routes[0].geometry.coordinates[i][0];
-                }
-              ctx.set("lastClick", true);
-              }
-            });
-          });
+          ctx.send("searchSecondAddress");
         }
       }
     },
