@@ -54,13 +54,14 @@ export default Component.extend({
       this.set('lat', center.lat);
       this.set('lng', center.lng);
     },
+
     deleteAll() {
-        this.set("polyline", A([]));
-        this.set('firstClick', false);
-        this.set('lastClick', false);
-        this.set('firstAddress', "");
-        this.set('secondAddress', "");
-      },
+      this.set("polyline", A([]));
+      this.set('firstClick', false);
+      this.set('lastClick', false);
+      this.set('firstAddress', "");
+      this.set('secondAddress', "");
+    },
 
     /*
     deleteLastPoint() {
@@ -129,35 +130,65 @@ export default Component.extend({
     // On Nominatim, we are able to make a request every seconds, so we can't have a research at the same time for the 2 addresses
     searchFirstAddress(){
       let ctx = this;
-      let url1 = "http://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
-      let latitude, longitude;
-      fetch(url1)             // Nomintatim does not work on Safari because of CORS
-      .then(function(response) { return response.json(); })
-      .then(function(data){
-        let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
-        fetch(url)
+      if (!this.get("firstClick")){
+        let url1 = "https://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
+        let latitude, longitude;
+        fetch(url1)             // Nomintatim does not work on Safari because of CORS
         .then(function(response) { return response.json(); })
         .then(function(data){
-          if (data.code == "Ok") {
-            latitude = data.waypoints[0].location[1];
-            longitude = data.waypoints[0].location[0]
-            ctx.get("polyline").pushObject({
-              lat: latitude,
-              lon: longitude,
-              alt: 0
-            });
-          ctx.set("firstClick", true);
-          ctx.set("lat", latitude);
-          ctx.set("lng", longitude);
-          }
+          let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
+          fetch(url)
+          .then(function(response) { return response.json(); })
+          .then(function(data){
+            if (data.code == "Ok") {
+              latitude = data.waypoints[0].location[1];
+              longitude = data.waypoints[0].location[0]
+              ctx.get("polyline").pushObject({
+                lat: latitude,
+                lon: longitude,
+                alt: 0
+              });
+            ctx.set("firstClick", true);
+            ctx.set("lat", latitude);
+            ctx.set("lng", longitude);
+            }
+          });
         });
-      });
+      }
+      else {
+        this.set("polyline", A([]));
+        this.set('firstClick', false);
+        this.set('lastClick', false);
+        let url1 = "https://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
+        let latitude, longitude;
+        fetch(url1)             // Nomintatim does not work on Safari because of CORS
+        .then(function(response) { return response.json(); })
+        .then(function(data){
+          let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
+          fetch(url)
+          .then(function(response) { return response.json(); })
+          .then(function(data){
+            if (data.code == "Ok") {
+              latitude = data.waypoints[0].location[1];
+              longitude = data.waypoints[0].location[0]
+              ctx.get("polyline").pushObject({
+                lat: latitude,
+                lon: longitude,
+                alt: 0
+              });
+            ctx.set("firstClick", true);
+            ctx.set("lat", latitude);
+            ctx.set("lng", longitude);
+            }
+          });
+        });
+      }
     },
     searchSecondAddress(){
       let ctx = this;
       if (this.get("firstClick")){
         if (!ctx.get("lastClick")){
-          let url2 = "http://nominatim.openstreetmap.org/search?q=" + this.secondAddress + "&format=json&polygon=1&addressdetails=1";
+          let url2 = "https://nominatim.openstreetmap.org/search?q=" + this.secondAddress + "&format=json&polygon=1&addressdetails=1";
           fetch(url2)             // Nomintatim does not work on Safari because of CORS
           .then(function(response) { return response.json(); })
           .then(function(data){
