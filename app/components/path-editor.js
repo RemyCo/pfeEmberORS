@@ -23,6 +23,8 @@ export default Component.extend({
   firstAddress: "",
   secondAddress: "",
 
+  tileUrl: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+
   isEnabled: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
     if (this.get('polyline').length > 1){
       return false;
@@ -32,8 +34,20 @@ export default Component.extend({
   }),
 
  // Compute the full distance for the polyline by summing the distance of each segment
-  distance: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
-    return this.get('polyline').map(t => (t.dist)).reduce(function(a,b) {return a+b;},0.0);
+  distance: computed('polyline', function () {
+    let dist = 0;
+    for (var i = 1; i < this.get("polyline").length; i++) {
+      dist = dist + this.get("polyline").objectAt([i]).dist;
+    }
+    return dist;
+  }),
+
+  duration: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
+    let duration = 0;
+    for (var i = 1; i < this.get("polyline").length; i++) {
+      duration = duration + this.get("polyline").objectAt([i]).dur;
+    }
+    return duration;
   }),
 
   startPoint: computed('polyline', function () {
@@ -61,6 +75,15 @@ export default Component.extend({
       this.set('lastClick', false);
       this.set('firstAddress', "");
       this.set('secondAddress', "");
+    },
+    changeDarkMode(){
+      this.set("tileUrl", "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png");
+    },
+    changeGMMode(){
+      this.set("tileUrl", "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png");
+    },
+    changeNormalMode(){
+      this.set("tileUrl", "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png");
     },
 
     /*

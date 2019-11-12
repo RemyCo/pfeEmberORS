@@ -8,7 +8,9 @@
     {{paper-input placeholder="Address" type="text" value=secondAddress onChange=(action (mut secondAddress)) icon="place"}}
     {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
     {{! Button to reset the path}}
-    {{#paper-button iconButton=true onClick=(action "deleteAll")}}{{paper-icon "cancel"}}{{/paper-button}}
+    {{#paper-button fab=true raised=true accent=true onClick=(action "deleteAll")}}
+      {{paper-icon "delete"}}
+    {{/paper-button}}
     
     <!--    Other Buttons that we have before
     {{! Button to delete just the last point added to path }}
@@ -25,16 +27,54 @@
     {{! Event click and move are mapped on Ember action }}
     {{#leaflet-map lat=lat lng=lng zoom=zoom onMoveend=(action "updateCenter") onClick=(action "updatePolyline")}}
       {{! Map layer is using OpenStreetMap data }}
-      {{tile-layer url="http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"}}
+      {{tile-layer url=tileUrl}}
       {{! Marker layer is composed of a marker for the first point binded with startPoint attribute and a polyline layer binded with polyline attribute }}
       {{#if firstClick}}
         {{marker-layer location=startPoint}}
       {{/if}}
       {{#if lastClick}}
         {{marker-layer location=endPoint}}
-        {{marker-layer location=middlePoint}}
+        {{#marker-layer location=middlePoint}}
+          {{#popup-layer}}
+            <h3>Informations</h3>
+            <p>Distance : {{distance}}</p>
+            <p>Duration : {{duration}}</p>
+          {{/popup-layer}}
+        {{/marker-layer }}
       {{/if}}
       {{polyline-layer locations=polyline}}
+
+      <div class="leaflet-bottom leaflet-right">
+        {{#paper-speed-dial
+              open=open onToggle=(action (mut open)) as |dial|}}
+              {{#dial.trigger}}
+                {{#paper-button fab=true}}
+                  {{paper-icon "brightness_4"}}
+                {{/paper-button}}
+              {{/dial.trigger}}
+
+              {{#dial.actions as |actions|}}
+                {{#actions.action}}
+                  {{#paper-button mini=true onClick=(action "changeDarkMode" true)}}
+                    {{paper-icon "invert_colors"}}
+                  {{/paper-button}}
+                {{/actions.action}}
+
+                {{#actions.action}}
+                  {{#paper-button mini=true onClick=(action "changeGMMode" true)}}
+                    {{paper-icon "filter_b_and_w"}}
+                  {{/paper-button}}
+                {{/actions.action}}
+
+                {{#actions.action}}
+                  {{#paper-button mini=true onClick=(action "changeNormalMode" true)}}
+                    {{paper-icon "flare"}}
+                  {{/paper-button}}
+                {{/actions.action}}
+              {{/dial.actions}}
+            {{/paper-speed-dial}}
+      </div>
+
     {{/leaflet-map}}
   </div>
 </div>
