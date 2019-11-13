@@ -44,37 +44,37 @@
       {{/if}}
       {{polyline-layer locations=polyline}}
 
-      <div class="leaflet-bottom leaflet-right">
-        {{#paper-speed-dial
-              open=open onToggle=(action (mut open)) as |dial|}}
-              {{#dial.trigger}}
-                {{#paper-button fab=true}}
-                  {{paper-icon "brightness_4"}}
-                {{/paper-button}}
-              {{/dial.trigger}}
-
-              {{#dial.actions as |actions|}}
-                {{#actions.action}}
-                  {{#paper-button mini=true onClick=(action "changeDarkMode" true)}}
-                    {{paper-icon "invert_colors"}}
-                  {{/paper-button}}
-                {{/actions.action}}
-
-                {{#actions.action}}
-                  {{#paper-button mini=true onClick=(action "changeGMMode" true)}}
-                    {{paper-icon "filter_b_and_w"}}
-                  {{/paper-button}}
-                {{/actions.action}}
-
-                {{#actions.action}}
-                  {{#paper-button mini=true onClick=(action "changeNormalMode" true)}}
-                    {{paper-icon "flare"}}
-                  {{/paper-button}}
-                {{/actions.action}}
-              {{/dial.actions}}
-            {{/paper-speed-dial}}
-      </div>
-
     {{/leaflet-map}}
   </div>
+
+  <div class="leaflet-bottom leaflet-right">
+      {{#paper-speed-dial
+        open=open onToggle=(action (mut open)) as |dial|}}
+        {{#dial.trigger}}
+          {{#paper-button fab=true}}
+            {{paper-icon "brightness_4"}}
+          {{/paper-button}}
+        {{/dial.trigger}}
+
+        {{#dial.actions as |actions|}}
+          {{#actions.action}}
+            {{#paper-button mini=true onClick=(action "changeDarkMode" true)}}
+              {{paper-icon "invert_colors"}}
+            {{/paper-button}}
+          {{/actions.action}}
+
+          {{#actions.action}}
+            {{#paper-button mini=true onClick=(action "changeGMMode" true)}}
+              {{paper-icon "filter_b_and_w"}}
+            {{/paper-button}}
+          {{/actions.action}}
+
+          {{#actions.action}}
+            {{#paper-button mini=true onClick=(action "changeNormalMode" true)}}
+              {{paper-icon "flare"}}
+            {{/paper-button}}
+          {{/actions.action}}
+        {{/dial.actions}}
+      {{/paper-speed-dial}}
+    </div>
 </div>
