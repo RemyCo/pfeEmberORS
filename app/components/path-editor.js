@@ -23,6 +23,8 @@ export default Component.extend({
   firstAddress: "",
   secondAddress: "",
 
+  tileUrl: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+
   isEnabled: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
     if (this.get('polyline').length > 1){
       return false;
@@ -32,8 +34,20 @@ export default Component.extend({
   }),
 
  // Compute the full distance for the polyline by summing the distance of each segment
-  distance: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
-    return this.get('polyline').map(t => (t.dist)).reduce(function(a,b) {return a+b;},0.0);
+  distance: computed('polyline', function () {
+    let dist = 0;
+    for (var i = 1; i < this.get("polyline").length; i++) {
+      dist = dist + this.get("polyline").objectAt([i]).dist;
+    }
+    return dist;
+  }),
+
+  duration: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
+    let duration = 0;
+    for (var i = 1; i < this.get("polyline").length; i++) {
+      duration = duration + this.get("polyline").objectAt([i]).dur;
+    }
+    return duration;
   }),
 
   startPoint: computed('polyline', function () {
@@ -44,7 +58,7 @@ export default Component.extend({
     return this.get('polyline').get('lastObject');
   }),
   middlePoint: computed('polyline', function () {
-    return this.get('polyline').objectAt(this.get('polyline').length/2);
+    return this.get('polyline').objectAt(Math.round(this.get('polyline').length/2));
   }),
 
   actions: {
@@ -54,13 +68,23 @@ export default Component.extend({
       this.set('lat', center.lat);
       this.set('lng', center.lng);
     },
+
     deleteAll() {
-        this.set("polyline", A([]));
-        this.set('firstClick', false);
-        this.set('lastClick', false);
-        this.set('firstAddress', "");
-        this.set('secondAddress', "");
-      },
+      this.set("polyline", A([]));
+      this.set('firstClick', false);
+      this.set('lastClick', false);
+      this.set('firstAddress', "");
+      this.set('secondAddress', "");
+    },
+    changeDarkMode(){
+      this.set("tileUrl", "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png");
+    },
+    changeGMMode(){
+      this.set("tileUrl", "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png");
+    },
+    changeNormalMode(){
+      this.set("tileUrl", "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png");
+    },
 
     /*
     deleteLastPoint() {
@@ -129,35 +153,68 @@ export default Component.extend({
     // On Nominatim, we are able to make a request every seconds, so we can't have a research at the same time for the 2 addresses
     searchFirstAddress(){
       let ctx = this;
-      let url1 = "http://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
-      let latitude, longitude;
-      fetch(url1)             // Nomintatim does not work on Safari because of CORS
-      .then(function(response) { return response.json(); })
-      .then(function(data){
-        let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
-        fetch(url)
+      if (!this.get("firstClick")){
+        let url1 = "https://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
+        let latitude, longitude;
+        fetch(url1)             // Nomintatim does not work on Safari because of CORS
         .then(function(response) { return response.json(); })
         .then(function(data){
-          if (data.code == "Ok") {
-            latitude = data.waypoints[0].location[1];
-            longitude = data.waypoints[0].location[0]
-            ctx.get("polyline").pushObject({
-              lat: latitude,
-              lon: longitude,
-              alt: 0
-            });
-          ctx.set("firstClick", true);
-          ctx.set("lat", latitude);
-          ctx.set("lng", longitude);
-          }
+          let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
+          fetch(url)
+          .then(function(response) { return response.json(); })
+          .then(function(data){
+            if (data.code == "Ok") {
+              latitude = data.waypoints[0].location[1];
+              longitude = data.waypoints[0].location[0]
+              ctx.get("polyline").pushObject({
+                lat: latitude,
+                lon: longitude,
+                alt: 0
+              });
+            ctx.set("firstClick", true);
+            ctx.set("lat", latitude);
+            ctx.set("lng", longitude);
+            }
+          });
         });
-      });
+      }
+      else {
+        this.set("polyline", A([]));
+        this.set('firstClick', false);
+        this.set('lastClick', false);
+        if (!this.get("firstClick")){
+          let url1 = "https://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
+          let latitude, longitude;
+          fetch(url1)             // Nomintatim does not work on Safari because of CORS
+          .then(function(response) { return response.json(); })
+          .then(function(data){
+            let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
+            fetch(url)
+            .then(function(response) { return response.json(); })
+            .then(function(data){
+              if (data.code == "Ok") {
+                latitude = data.waypoints[0].location[1];
+                longitude = data.waypoints[0].location[0]
+                ctx.get("polyline").pushObject({
+                  lat: latitude,
+                  lon: longitude,
+                  alt: 0
+                });
+              ctx.set("firstClick", true);
+              ctx.set("lat", latitude);
+              ctx.set("lng", longitude);
+              }
+            });
+          });
+        }
+      }
     },
+
     searchSecondAddress(){
       let ctx = this;
       if (this.get("firstClick")){
         if (!ctx.get("lastClick")){
-          let url2 = "http://nominatim.openstreetmap.org/search?q=" + this.secondAddress + "&format=json&polygon=1&addressdetails=1";
+          let url2 = "https://nominatim.openstreetmap.org/search?q=" + this.secondAddress + "&format=json&polygon=1&addressdetails=1";
           fetch(url2)             // Nomintatim does not work on Safari because of CORS
           .then(function(response) { return response.json(); })
           .then(function(data){
@@ -193,6 +250,10 @@ export default Component.extend({
               }
             });
           });
+        } else {
+          ctx.set("polyline", A([ctx.get("polyline").firstObject]));
+          ctx.set("lastClick", false);
+          ctx.send("searchSecondAddress");
         }
       }
     },

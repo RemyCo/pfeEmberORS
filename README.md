@@ -1,7 +1,6 @@
 # path-editor
 
-This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
+This project, in charge for the city of Angers in France, was made for a PFE, a graduation project. It is a cyclist route calculator, to be put in the app of the city of Angers later. The server side use OSRM, and the client side use Ember and Leaflet to properly make the route calculator. 
 
 ## Prerequisites
 
