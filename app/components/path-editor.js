@@ -94,6 +94,12 @@ export default Component.extend({
       let url;
       let ctx = this;
       if (!this.get("firstClick")) {
+        url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + e.latlng.lat + "&lon=" + e.latlng.lng + "&zoom=18&addressdetails=1";
+        fetch(url)
+          .then(function(response) { return response.json(); })
+          .then(function(data){
+            ctx.set("firstAddress", data.display_name);
+        });
         ctx.get("polyline").pushObject({
           lat: e.latlng.lat,
           lon: e.latlng.lng,
@@ -105,6 +111,12 @@ export default Component.extend({
         let prevLon = this.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
         let preference = this.get('preference');
         let profile = this.get('profile');
+        url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + e.latlng.lat + "&lon=" + e.latlng.lng + "&zoom=18&addressdetails=1";
+        fetch(url)
+          .then(function(response) { return response.json(); })
+          .then(function(data){
+            ctx.set("secondAddress", data.display_name);
+        });
         // Calling ORS for a polyline segment joining the given two coordinates
         url = "/ors/routes/?profile=" + profile + "&coordinates="+prevLon+","+prevLat+"|"+e.latlng.lng+","+e.latlng.lat+"&format=geojson&preference=" + preference + "&language=fr";
         fetch(url)
