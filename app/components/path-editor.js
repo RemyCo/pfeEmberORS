@@ -100,16 +100,16 @@ export default Component.extend({
     },
     */
 
-    addPolyline(latitude, longitude, altitude){
+    addPolyline(latitude, longitude, altitude, polyline){
       let ctx = this;
-      ctx.get("polyline").pushObject({
+      ctx.get(polyline).pushObject({
         lat: latitude,
         lon: longitude,
         alt: altitude,
       });
     },
 
-    pathCreation(latitude, longitude, preference, profile){
+    pathCreation(latitude, longitude, preference, profile, polyline){
       let ctx = this;
       let prevLat = this.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
       let prevLon = this.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
@@ -123,7 +123,7 @@ export default Component.extend({
           ctx.set("distance", data.features[0].properties.summary[0].distance);
           ctx.set("duration", data.features[0].properties.summary[0].duration);
           for (var i = 1; i < data.features[0].geometry.coordinates.length; i++) {
-            ctx.send("addPolyline", data.features[0].geometry.coordinates[i][1], data.features[0].geometry.coordinates[i][0],0);
+            ctx.send("addPolyline", data.features[0].geometry.coordinates[i][1], data.features[0].geometry.coordinates[i][0],0, polyline);
             prevLat = data.features[0].geometry.coordinates[i][1];
             prevLon = data.features[0].geometry.coordinates[i][0];
           }
@@ -142,7 +142,7 @@ export default Component.extend({
           .then(function(data){
             ctx.set("firstAddress", data.display_name);
         });
-        ctx.send("addPolyline", e.latlng.lat, e.latlng.lng,0);
+        ctx.send("addPolyline", e.latlng.lat, e.latlng.lng,0, "polyline");
         ctx.set("firstClick", true);
       } else if (!this.get("lastClick")){
         url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + e.latlng.lat + "&lon=" + e.latlng.lng + "&zoom=18&addressdetails=1";
@@ -153,7 +153,7 @@ export default Component.extend({
           .then(function(data){
             ctx.set("secondAddress", data.display_name);
         });
-        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, preference, profile);
+        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, preference, profile, "polyline");
       }
     },
 
@@ -165,7 +165,7 @@ export default Component.extend({
         fetch(url)
         .then(function(response) { return response.json(); })
         .then(function(data){
-          ctx.send("addPolyline", data[0].lat, data[0].lon,0);
+          ctx.send("addPolyline", data[0].lat, data[0].lon,0), "polyline";
           ctx.set("firstClick", true);
           ctx.set("lat", data[0].lat);
           ctx.set("lng", data[0].lon);
@@ -189,7 +189,7 @@ export default Component.extend({
             let preference = ctx.get('preference');
             let profile = ctx.get('profile');
             // Calling ORS for a polyline segment joining the given two coordinates
-            ctx.send("pathCreation", data[0].lat, data[0].lon, preference, profile);
+            ctx.send("pathCreation", data[0].lat, data[0].lon, preference, profile, "polyline");
           });
         } else {
           ctx.set("polyline", A([ctx.get("polyline").firstObject]));
