@@ -37,12 +37,12 @@
         {{#marker-layer location=middlePoint}}
           {{#popup-layer}}
             <h3>Informations</h3>
-            <p>Distance : {{distance}}</p>
+            <p>Distance : {{distanceKm}}</p>
             <p>Duration : {{duration}}</p>
           {{/popup-layer}}
         {{/marker-layer }}
       {{/if}}
-      {{polyline-layer locations=polyline}}
+      {{polyline-layer locations=polyline color="#000000"}}
 
     {{/leaflet-map}}
   </div>

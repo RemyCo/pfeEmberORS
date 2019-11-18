@@ -43,6 +43,16 @@ export default Component.extend({
   distance: 0,
   duration: 0,
 
+  distanceKm: computed('distance', function () {
+    var distance = this.get('distance');
+    if (distance < 1000){
+      distance = distance + " m"
+    } else {
+      distance = Math.round(distance /100)/10 + ' km'
+    }
+    return distance;
+  }),
+
   startPoint: computed('polyline', function () {
     return this.get('polyline').get('firstObject');
   }),
