@@ -25,7 +25,7 @@
   {{! Right column to contain the map}}
   <div class="map">
     {{! Event click and move are mapped on Ember action }}
-    {{#leaflet-map lat=lat lng=lng zoom=zoom onMoveend=(action "updateCenter") onClick=(action "updatePolyline")}}
+    {{#leaflet-map lat=lat lng=lng zoom=zoom onMoveend=(action "updateCenter") onClick=(action "onMapClick")}}
       {{! Map layer is using OpenStreetMap data }}
       {{tile-layer url=tileUrl}}
       {{! Marker layer is composed of a marker for the first point binded with startPoint attribute and a polyline layer binded with polyline attribute }}
