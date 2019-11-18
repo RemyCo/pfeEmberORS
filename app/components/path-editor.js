@@ -39,18 +39,21 @@ export default Component.extend({
     }
   }),
 
- // Compute the full distance for the polyline by summing the distance of each segment
   distance: 0,
   duration: 0,
 
   distanceKm: computed('distance', function () {
     var distance = this.get('distance');
     if (distance < 1000){
-      distance = distance + " m"
+      distance = Math.round(distance/10)*10 + " m";  //To have a multipier of 10 for the meters
     } else {
-      distance = Math.round(distance /100)/10 + ' km'
+      distance = Math.round(distance /100)/10 + ' km';  //To have just a number after the dot.
     }
     return distance;
+  }),
+
+  durationS: computed('duration', function () {
+    return Math.round(this.get('duration')/60) + ' min';
   }),
 
   startPoint: computed('polyline', function () {
