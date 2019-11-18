@@ -8,8 +8,8 @@
     {{paper-input placeholder="Address" type="text" value=secondAddress onChange=(action (mut secondAddress)) icon="place"}}
     {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
     {{! Button to reset the path}}
-    {{#paper-button fab=true raised=true accent=true onClick=(action "deleteAll")}}
-      {{paper-icon "delete"}}
+    {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
+      {{paper-icon "delete" size=24}}
     {{/paper-button}}
     
     <!--    Other Buttons that we have before
@@ -36,13 +36,13 @@
         {{marker-layer location=endPoint}}
         {{#marker-layer location=middlePoint}}
           {{#popup-layer}}
-            <h3>Informations</h3>
-            <p>Distance : {{distance}}</p>
-            <p>Duration : {{duration}}</p>
+            <h3>Recommended : </h3>
+            <h4>{{durationS}}</h4>
+            <p>{{distanceKm}}</p>
           {{/popup-layer}}
         {{/marker-layer }}
       {{/if}}
-      {{polyline-layer locations=polyline}}
+      {{polyline-layer locations=polyline color="#000000"}}
 
     {{/leaflet-map}}
   </div>
