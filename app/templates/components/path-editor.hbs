@@ -34,16 +34,11 @@
       {{/if}}
       {{#if lastClick}}
         {{marker-layer location=endPoint}}
-        {{#marker-layer location=middlePoint}}
-          {{#popup-layer}}
-            <h3>Recommended : </h3>
-            <h4>{{durationS}}</h4>
-            <p>{{distanceKm}}</p>
-          {{/popup-layer}}
-        {{/marker-layer }}
       {{/if}}
       {{!polyline-layer locations=polyline color="#000000"  to be able to change the color of the polyline}}
-      {{polyline-layer locations=polyline }}
+      {{polyline-layer locations=polylineRecommended }}
+      {{polyline-layer locations=polylineShortest color="#FF0000" }}
+      {{polyline-layer locations=polylineFastest color="#00FF00" }}
 
     {{/leaflet-map}}
   </div>
