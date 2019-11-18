@@ -23,6 +23,12 @@ export default Component.extend({
   firstAddress: "",
   secondAddress: "",
 
+  firstAddressLat: 0,
+  firstAddressLon: 0,
+
+  preference: "fastest",
+  profile: "cycling-regular",
+
   tileUrl: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
 
   isEnabled: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
@@ -34,21 +40,8 @@ export default Component.extend({
   }),
 
  // Compute the full distance for the polyline by summing the distance of each segment
-  distance: computed('polyline', function () {
-    let dist = 0;
-    for (var i = 1; i < this.get("polyline").length; i++) {
-      dist = dist + this.get("polyline").objectAt([i]).dist;
-    }
-    return dist;
-  }),
-
-  duration: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
-    let duration = 0;
-    for (var i = 1; i < this.get("polyline").length; i++) {
-      duration = duration + this.get("polyline").objectAt([i]).dur;
-    }
-    return duration;
-  }),
+  distance: 0,
+  duration: 0,
 
   startPoint: computed('polyline', function () {
     return this.get('polyline').get('firstObject');
@@ -101,52 +94,42 @@ export default Component.extend({
       let url;
       let ctx = this;
       if (!this.get("firstClick")) {
-        url = "/nearest/v1/biking/"+e.latlng.lng+","+e.latlng.lat+"?number=1";
-        fetch(url)
-        .then(function(response) { return response.json(); })
-        .then(function(data){
-          if (data.code == "Ok") {
-            ctx.get("polyline").pushObject({
-              lat: data.waypoints[0].location[1],
-              lon: data.waypoints[0].location[0],
-              alt: 0
-            });
-            ctx.set("firstAddress", data.waypoints[0].name);
-            ctx.set("firstClick", true);
-          }
+        ctx.get("polyline").pushObject({
+          lat: e.latlng.lat,
+          lon: e.latlng.lng,
+          alt: 0
         });
+        ctx.set("firstClick", true);
       } else if (!this.get("lastClick")){
         let prevLat = this.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
         let prevLon = this.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
-        // Calling OSRM for a polyline segment joining the given two coordinates
-        url = "/route/v1/biking/"+prevLon+","+prevLat+";"+e.latlng.lng+","+e.latlng.lat+"?steps=true&geometries=geojson";
+        let preference = this.get('preference');
+        let profile = this.get('profile');
+        // Calling ORS for a polyline segment joining the given two coordinates
+        url = "/ors/routes/?profile=" + profile + "&coordinates="+prevLon+","+prevLat+"|"+e.latlng.lng+","+e.latlng.lat+"&format=geojson&preference=" + preference + "&language=fr";
         fetch(url)
           .then(function(response) { return response.json(); })
           .then(function(data){
-          if (data.code == "Ok") {
             ctx.get('previousIndex').push(ctx.get('polyline').length+1);
             // Only consider the first route
-            let dist = data.routes[0].legs[0].distance;
-            let dur = data.routes[0].duration;
-            for (var i = 1; i < data.routes[0].geometry.coordinates.length; i++) {
+            ctx.set("distance", data.features[0].properties.summary[0].distance);
+            ctx.set("duration", data.features[0].properties.summary[0].duration);
+            for (var i = 1; i < data.features[0].geometry.coordinates.length; i++) {
               // Compute distance between coordinates
               /*
               let dist = this.geoUtils.haversine(prevLat, prevLon,
-                data.routes[0].geometry.coordinates[i][1], data.routes[0].geometry.coordinates[i][0]);
+                data.features[0].geometry.coordinates[i][1], data.features[0].geometry.coordinates[i][0]);
                 */
               ctx.get("polyline").pushObject({
-                lat: data.routes[0].geometry.coordinates[i][1],
-                lon: data.routes[0].geometry.coordinates[i][0],
+                lat: data.features[0].geometry.coordinates[i][1],
+                lon: data.features[0].geometry.coordinates[i][0],
                 alt: 0,
-                dist:dist,
-                dur:dur
               });
-              prevLat = data.routes[0].geometry.coordinates[i][1];
-              prevLon = data.routes[0].geometry.coordinates[i][0];
+              prevLat = data.features[0].geometry.coordinates[i][1];
+              prevLon = data.features[0].geometry.coordinates[i][0];
             }
-            ctx.set("secondAddress", data.waypoints[1].name);
+            //ctx.set("secondAddress", data.waypoints[1].name);
             ctx.set("lastClick", true);
-          }
         });
       }
     },
