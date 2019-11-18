@@ -8,8 +8,8 @@
     {{paper-input placeholder="Address" type="text" value=secondAddress onChange=(action (mut secondAddress)) icon="place"}}
     {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
     {{! Button to reset the path}}
-    {{#paper-button fab=true raised=true accent=true onClick=(action "deleteAll")}}
-      {{paper-icon "delete"}}
+    {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
+      {{paper-icon "delete" size=24}}
     {{/paper-button}}
     
     <!--    Other Buttons that we have before
