@@ -139,27 +139,20 @@ export default Component.extend({
       if (!this.get("firstClick")){
         let url1 = "https://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
         let latitude, longitude;
-        fetch(url1)             // Nomintatim does not work on Safari because of CORS
+        fetch(url1)
         .then(function(response) { return response.json(); })
         .then(function(data){
-          let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
-          fetch(url)
-          .then(function(response) { return response.json(); })
-          .then(function(data){
-            if (data.code == "Ok") {
-              latitude = data.waypoints[0].location[1];
-              longitude = data.waypoints[0].location[0]
-              ctx.get("polyline").pushObject({
-                lat: latitude,
-                lon: longitude,
-                alt: 0
-              });
-            ctx.set("firstClick", true);
-            ctx.set("lat", latitude);
-            ctx.set("lng", longitude);
-            }
+          latitude = data[0].lat;
+          longitude = data[0].lon;
+          ctx.get("polyline").pushObject({
+            lat: latitude,
+            lon: longitude,
+            alt: 0
           });
-        });
+          ctx.set("firstClick", true);
+          ctx.set("lat", latitude);
+          ctx.set("lng", longitude);
+      });
       }
       else {
         this.set("polyline", A([]));
@@ -168,26 +161,19 @@ export default Component.extend({
         if (!this.get("firstClick")){
           let url1 = "https://nominatim.openstreetmap.org/search?q=" + this.firstAddress + "&format=json&polygon=1&addressdetails=1";
           let latitude, longitude;
-          fetch(url1)             // Nomintatim does not work on Safari because of CORS
+          fetch(url1)
           .then(function(response) { return response.json(); })
           .then(function(data){
-            let url = "/nearest/v1/biking/"+data[0].lon+","+data[0].lat+"?number=1";
-            fetch(url)
-            .then(function(response) { return response.json(); })
-            .then(function(data){
-              if (data.code == "Ok") {
-                latitude = data.waypoints[0].location[1];
-                longitude = data.waypoints[0].location[0]
-                ctx.get("polyline").pushObject({
-                  lat: latitude,
-                  lon: longitude,
-                  alt: 0
-                });
-              ctx.set("firstClick", true);
-              ctx.set("lat", latitude);
-              ctx.set("lng", longitude);
-              }
+            latitude = data[0].lat;
+            longitude = data[0].lon;
+            ctx.get("polyline").pushObject({
+              lat: latitude,
+              lon: longitude,
+              alt: 0
             });
+            ctx.set("firstClick", true);
+            ctx.set("lat", latitude);
+            ctx.set("lng", longitude);
           });
         }
       }
@@ -203,34 +189,33 @@ export default Component.extend({
           .then(function(data){
             let prevLat = ctx.get('polyline').objectAt(ctx.get('polyline').length-1).lat;
             let prevLon = ctx.get('polyline').objectAt(ctx.get('polyline').length-1).lon;
-            // Calling OSRM for a polyline segment joining the given two coordinates
-            let url = "/route/v1/biking/"+prevLon+","+prevLat+";"+data[0].lon+","+data[0].lat+"?steps=true&geometries=geojson";
+            let preference = ctx.get('preference');
+            let profile = ctx.get('profile');
+            // Calling ORS for a polyline segment joining the given two coordinates
+            let url = "/ors/routes/?profile=" + profile + "&coordinates="+prevLon+","+prevLat+"|"+data[0].lon+","+data[0].lat+"&format=geojson&preference=" + preference + "&language=fr";
             fetch(url)
               .then(function(response) { return response.json(); })
               .then(function(data){
-              if (data.code == "Ok") {
                 ctx.get('previousIndex').push(ctx.get('polyline').length+1);
                 // Only consider the first route
-                let dist = data.routes[0].legs[0].distance;
-                let dur = data.routes[0].duration;
-                for (var i = 1; i < data.routes[0].geometry.coordinates.length; i++) {
+                ctx.set("distance", data.features[0].properties.summary[0].distance);
+                ctx.set("duration", data.features[0].properties.summary[0].duration);
+                for (var i = 1; i < data.features[0].geometry.coordinates.length; i++) {
                   // Compute distance between coordinates
                   /*
                   let dist = this.geoUtils.haversine(prevLat, prevLon,
-                    data.routes[0].geometry.coordinates[i][1], data.routes[0].geometry.coordinates[i][0]);
+                    data.features[0].geometry.coordinates[i][1], data.features[0].geometry.coordinates[i][0]);
                     */
                   ctx.get("polyline").pushObject({
-                    lat: data.routes[0].geometry.coordinates[i][1],
-                    lon: data.routes[0].geometry.coordinates[i][0],
+                    lat: data.features[0].geometry.coordinates[i][1],
+                    lon: data.features[0].geometry.coordinates[i][0],
                     alt: 0,
-                    dist:dist,
-                    dur:dur
                   });
-                  prevLat = data.routes[0].geometry.coordinates[i][1];
-                  prevLon = data.routes[0].geometry.coordinates[i][0];
+                  prevLat = data.features[0].geometry.coordinates[i][1];
+                  prevLon = data.features[0].geometry.coordinates[i][0];
                 }
-              ctx.set("lastClick", true);
-              }
+                //ctx.set("secondAddress", data.waypoints[1].name);
+                ctx.set("lastClick", true);
             });
           });
         } else {
