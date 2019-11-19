@@ -58,8 +58,11 @@ export default Component.extend({
   startPoint: computed('polylineRecommended', function () {
     return this.get('polylineRecommended').get('firstObject');
   }),
-  endPoint: computed('polylineFastest', function () {
-    return this.get('polylineFastest').get('lastObject');
+  endPoint: computed('polylineRecommended', function () {
+    return this.get('polylineRecommended').get('lastObject');
+  }),
+  middlePoint: computed('polylineRecommended', function () {
+    return this.get('polylineRecommended').objectAt(Math.round(this.get('polylineRecommended').length/2));
   }),
 
   actions: {
@@ -114,7 +117,7 @@ export default Component.extend({
       let prevLat = this.get(polyline).objectAt(ctx.get(polyline).length-1).lat;
       let prevLon = this.get(polyline).objectAt(ctx.get(polyline).length-1).lon;
       // Calling ORS for a polyline segment joining the given two coordinates
-      let url = "/ors/routes/?profile=" + profile + "&coordinates="+prevLon+","+prevLat+"|"+longitude+","+latitude+"&format=geojson&preference=" + preference + "&language=fr";
+      let url = "http://localhost:8080/ors/routes/?profile=" + profile + "&coordinates="+prevLon+","+prevLat+"|"+longitude+","+latitude+"&format=geojson&preference=" + preference + "&language=fr";
       fetch(url)
         .then(function(response) { return response.json(); })
         .then(function(data){
@@ -148,16 +151,15 @@ export default Component.extend({
         ctx.set("firstClick", true);
       } else if (!this.get("lastClick")){
         url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + e.latlng.lat + "&lon=" + e.latlng.lng + "&zoom=18&addressdetails=1";
-        let preference = this.get('preference');
         let profile = this.get('profile');
         fetch(url)
           .then(function(response) { return response.json(); })
           .then(function(data){
             ctx.set("secondAddress", data.display_name);
         });
-        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, preference, profile, "polylineRecommended");
-        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "shortest", profile, "polylineShortest");
-        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "fastest", profile, "polylineFastest");
+        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "recommended", profile, "polylineRecommended");
+        //ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "shortest", profile, "polylineShortest");
+        //ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "fastest", profile, "polylineFastest");
       }
     },
 
@@ -194,10 +196,9 @@ export default Component.extend({
           fetch(url)
           .then(function(response) { return response.json(); })
           .then(function(data){
-            let preference = ctx.get('preference');
             let profile = ctx.get('profile');
             // Calling ORS for a polyline segment joining the given two coordinates
-            ctx.send("pathCreation", data[0].lat, data[0].lon, preference, profile, "polylineRecommended");
+            ctx.send("pathCreation", data[0].lat, data[0].lon, "recommended", profile, "polylineRecommended");
             ctx.send("pathCreation", data[0].lat, data[0].lon, "shortest", profile, "polylineShortest");
             ctx.send("pathCreation", data[0].lat, data[0].lon, "fastest", profile, "polylineFastest");
             ctx.set("lastClick", true);
