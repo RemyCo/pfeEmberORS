@@ -16,6 +16,8 @@ export default Component.extend({
   // Boolean indicating if the target for next action is the starter marker or a polyline
   firstClick: false,
   lastClick: false,
+  lastClickRecommended: false,
+  lastClickFastest: false,
   // Keep track of the indexes of the start of the different segments of the polylines
   previousIndex: [],
 
@@ -38,11 +40,13 @@ export default Component.extend({
     }
   }),
 
-  distance: 0,
-  duration: 0,
+  distanceRecommended: 0,
+  durationRecommended: 0,
+  distanceFastest: 0,
+  durationFastest: 0,
 
-  distanceKm: computed('distance', function () {
-    var distance = this.get('distance');
+  distanceKmR: computed('distanceRecommended', function () {
+    var distance = this.get('distanceRecommended');
     if (distance < 1000){
       distance = Math.round(distance/10)*10 + " m";  //To have a multipier of 10 for the meters
     } else {
@@ -51,8 +55,22 @@ export default Component.extend({
     return distance;
   }),
 
-  durationS: computed('duration', function () {
-    return Math.round(this.get('duration')/60) + ' min';
+  durationSR: computed('durationRecommended', function () {
+    return Math.round(this.get('durationRecommended')/60) + ' min';
+  }),
+
+  distanceKmF: computed('distanceFastest', function () {
+    var distance = this.get('distanceFastest');
+    if (distance < 1000){
+      distance = Math.round(distance/10)*10 + " m";  //To have a multipier of 10 for the meters
+    } else {
+      distance = Math.round(distance /100)/10 + ' km';  //To have just a number after the dot.
+    }
+    return distance;
+  }),
+
+  durationSF: computed('durationFastest', function () {
+    return Math.round(this.get('durationFastest')/60) + ' min';
   }),
 
   startPoint: computed('polylineRecommended', function () {
@@ -61,7 +79,10 @@ export default Component.extend({
   endPoint: computed('polylineRecommended', function () {
     return this.get('polylineRecommended').get('lastObject');
   }),
-  middlePoint: computed('polylineRecommended', function () {
+  middlePointFastest: computed('polylineFastest', function () {
+    return this.get('polylineFastest').objectAt(Math.round(this.get('polylineFastest').length/2));
+  }),
+  middlePointRecommended: computed('polylineRecommended', function () {
     return this.get('polylineRecommended').objectAt(Math.round(this.get('polylineRecommended').length/2));
   }),
 
@@ -79,8 +100,14 @@ export default Component.extend({
       this.set("polylineShortest", A([]));
       this.set('firstClick', false);
       this.set('lastClick', false);
+      this.set('lastClickRecommended', false);
+      this.set('lastClickFastest', false);
       this.set('firstAddress', "");
       this.set('secondAddress', "");
+      this.set('distanceRecommended', 0);
+      this.set('durationRecommended', 0);
+      this.set('distanceFastest', 0);
+      this.set('durationFastest', 0);
     },
     changeDarkMode(){
       this.set("tileUrl", "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png");
@@ -123,12 +150,19 @@ export default Component.extend({
         .then(function(data){
           ctx.get('previousIndex').push(ctx.get(polyline).length+1);
           // Only consider the first route
-          ctx.set("distance", data.features[0].properties.summary[0].distance);
-          ctx.set("duration", data.features[0].properties.summary[0].duration);
           for (var i = 1; i < data.features[0].geometry.coordinates.length; i++) {
             ctx.send("addPolyline", data.features[0].geometry.coordinates[i][1], data.features[0].geometry.coordinates[i][0],0, polyline);
             prevLat = data.features[0].geometry.coordinates[i][1];
             prevLon = data.features[0].geometry.coordinates[i][0];
+          }
+          if (preference === "fastest"){
+            ctx.set("lastClickFastest", true);
+            ctx.set("distanceFastest", data.features[0].properties.summary[0].distance);
+            ctx.set("durationFastest", data.features[0].properties.summary[0].duration);
+          } else if (preference === "recommended"){
+            ctx.set("lastClickRecommended", true);
+            ctx.set("distanceRecommended", data.features[0].properties.summary[0].distance);
+            ctx.set("durationRecommended", data.features[0].properties.summary[0].duration);
           }
           ctx.set("lastClick", true);
        });
@@ -152,14 +186,15 @@ export default Component.extend({
       } else if (!this.get("lastClick")){
         url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + e.latlng.lat + "&lon=" + e.latlng.lng + "&zoom=18&addressdetails=1";
         let profile = this.get('profile');
+        let preference = this.get('preference');
         fetch(url)
           .then(function(response) { return response.json(); })
           .then(function(data){
             ctx.set("secondAddress", data.display_name);
         });
-        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "recommended", profile, "polylineRecommended");
+        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, preference, profile, "polylineRecommended");
         //ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "shortest", profile, "polylineShortest");
-        //ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "fastest", profile, "polylineFastest");
+        ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "fastest", profile, "polylineFastest");
       }
     },
 
@@ -201,7 +236,6 @@ export default Component.extend({
             ctx.send("pathCreation", data[0].lat, data[0].lon, "recommended", profile, "polylineRecommended");
             ctx.send("pathCreation", data[0].lat, data[0].lon, "shortest", profile, "polylineShortest");
             ctx.send("pathCreation", data[0].lat, data[0].lon, "fastest", profile, "polylineFastest");
-            ctx.set("lastClick", true);
           });
         } else {
           ctx.set("polylineRecommended", A([ctx.get("polylineRecommended").firstObject]));

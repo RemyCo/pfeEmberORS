@@ -32,20 +32,29 @@
       {{#if firstClick}}
         {{marker-layer location=startPoint}}
       {{/if}}
-      {{#if lastClick}}
+      {{#if lastClickRecommended}}
         {{marker-layer location=endPoint}}
-        {{#marker-layer location=middlePoint}}
+        {{#marker-layer location=middlePointRecommended}}
           {{#popup-layer}}
-            <h3>Recommended : </h3>
-            <h4>{{durationS}}</h4>
-            <p>{{distanceKm}}</p>
+            <h3>Recommended :</h3>
+            <h4>{{durationSR}}</h4>
+            <p>{{distanceKmR}}</p>
+          {{/popup-layer}}
+        {{/marker-layer }}
+      {{/if}}
+      {{#if lastClickFastest}}
+        {{#marker-layer location=middlePointFastest}}
+          {{#popup-layer}}
+            <h3>Fastest :</h3>
+            <h4>{{durationSF}}</h4>
+            <p>{{distanceKmF}}</p>
           {{/popup-layer}}
         {{/marker-layer }}
       {{/if}}
       {{!polyline-layer locations=polyline color="#000000"  to be able to change the color of the polyline}}
       {{polyline-layer locations=polylineRecommended }}
       {{!polyline-layer locations=polylineShortest color="#FF0000" }}
-      {{!polyline-layer locations=polylineFastest color="#00FF00" }}
+      {{polyline-layer locations=polylineFastest color="#00FF00" }}
 
     {{/leaflet-map}}
   </div>
