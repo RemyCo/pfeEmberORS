@@ -30,7 +30,8 @@ export default Component.extend({
   preference: "recommended",
   profile: "cycling-regular",
 
-  tileUrl: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+  tileUrl: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+
 
   isEnabled: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
     if (this.get('polylineRecommended').length > 1){
@@ -118,17 +119,6 @@ export default Component.extend({
     changeNormalMode(){
       this.set("tileUrl", "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png");
     },
-
-    /*
-    deleteLastPoint() {
-      this.get("polyline").popObject();
-    },
-    deleteLastSegment() {
-      if (this.get("previousIndex").length > 0) {
-        this.set("polyline", this.get("polyline").slice(0, this.get('previousIndex').pop()));
-      }
-    },
-    */
 
     addPolyline(latitude, longitude, altitude, polyline){
       let ctx = this;
