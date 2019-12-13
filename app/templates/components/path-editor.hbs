@@ -2,16 +2,21 @@
 <div class="window">
   {{! left column to contain the button to interact with the path drawn on top of the map }}
   <div class="tool">
+    <div class="grid">
+        {{#paper-switch value=booleanProp1 onChange=(action (mut booleanProp1))}}
+          Itinéraire sécurisé
+        {{/paper-switch}}
+        <div class="start">
+          {{paper-input placeholder="Adresse de départ" type="text" value=firstAddress onChange=(action (mut firstAddress))}}
+          {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
+        </div>
 
-    <div class="start">
-      {{paper-input placeholder="Adresse de départ" type="text" value=firstAddress onChange=(action (mut firstAddress))}}
-      {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
+        <div class="finish">
+          {{paper-input placeholder="Adresse d'arrivée" type="text" value=secondAddress onChange=(action (mut secondAddress))}}
+          {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
+        </div>
     </div>
 
-    <div class="finish">
-      {{paper-input placeholder="Adresse d'arrivée" type="text" value=secondAddress onChange=(action (mut secondAddress))}}
-      {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
-    </div>
     {{! Button to reset the path}}
     {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
     {{paper-icon "delete" size=24}}
@@ -26,6 +31,7 @@
     {{distance}}
     {{duration}}
     -->
+
   </div>
   {{! Right column to contain the map}}
   <div class="map">

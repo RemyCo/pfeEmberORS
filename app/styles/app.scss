@@ -19,13 +19,6 @@ md-input-container {
   margin: 0;
 }
 
-#ember237 {
-  display: block;
-  right: 0;
-  left: 0;
-  margin: auto;
-}
-
 .leaflet-left {
   left: auto;
   right: 0;
@@ -43,12 +36,14 @@ md-input-container {
     background-color: white;
     right: auto;
     left: auto;
-    padding: 10px;
-    margin: 10px;
+    padding: 30px;
+    margin: 15px;
     border-radius: 20px;
   }
 
+
   md-input-container {
+    display: inline-block;
     width: 80%;
     margin: 0px 0;
   }
@@ -63,12 +58,5 @@ md-input-container {
     top: 0;
     width: 20px;
     height: 20px;
-  }
-
-  #ember237 {
-    display: unset;
-    right: unset;
-    left: unset;
-    margin: unset;
   }
 }
