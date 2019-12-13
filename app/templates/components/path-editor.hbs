@@ -1,27 +1,13 @@
 {{! Third div to display the core of the component: buttons + map }}
 <div class="window">
   {{! left column to contain the button to interact with the path drawn on top of the map }}
-  <div class="tool">
 
-    {{paper-input placeholder="Address" type="text" value=firstAddress onChange=(action (mut firstAddress)) icon="place"}}
-    {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
-    {{paper-input placeholder="Address" type="text" value=secondAddress onChange=(action (mut secondAddress)) icon="place"}}
-    {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
-    {{! Button to reset the path}}
-    {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
-      {{paper-icon "delete" size=24}}
-    {{/paper-button}}
-    
-    <!--    Other Buttons that we have before
-    {{! Button to delete just the last point added to path }}
-    {{#paper-button iconButton=true disabled=isEnabled onClick=(action "deleteLastPoint")}}{{paper-icon "reply"}}{{/paper-button}}
-    {{! Button to delete the last segment added to the path }}
-    {{#paper-button iconButton=true disabled=isEnabled onClick=(action "deleteLastSegment")}}{{paper-icon "reply all"}}{{/paper-button}}
-    {{! Display the full distance in km for the currently drawn path thanks to the bind attribute }}
-    {{distance}}
-    {{duration}}
-    -->
+  <div class="tool">
+   
   </div>
+
+
+
   {{! Right column to contain the map}}
   <div class="map">
     {{! Event click and move are mapped on Ember action }}
@@ -59,34 +45,21 @@
     {{/leaflet-map}}
   </div>
 
-  <div class="leaflet-bottom leaflet-right">
-      {{#paper-speed-dial
-        open=open onToggle=(action (mut open)) as |dial|}}
-        {{#dial.trigger}}
-          {{#paper-button fab=true}}
-            {{paper-icon "brightness_4"}}
-          {{/paper-button}}
-        {{/dial.trigger}}
+   <div class="leaflet-top leaflet-left">
+    {{paper-input placeholder="Address" type="text" value=firstAddress onChange=(action (mut firstAddress)) icon="place"}}
+    {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
+    {{paper-input placeholder="Address" type="text" value=secondAddress onChange=(action (mut secondAddress)) icon="place"}}
+    {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
+    {{! Button to reset the path}}
+    {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
+      {{paper-icon "delete" size=24}}
+    {{/paper-button}}
+  </div>
 
-        {{#dial.actions as |actions|}}
-          {{#actions.action}}
-            {{#paper-button mini=true onClick=(action "changeDarkMode" true)}}
-              {{paper-icon "invert_colors"}}
-            {{/paper-button}}
-          {{/actions.action}}
+  <div class="leaflet-top leaflet-right">
+    {{#paper-button mini=true onClick="location.href='google.fr';"}}
+      {{paper-icon "icon"}}
+    {{/paper-button}}
+  </div>
 
-          {{#actions.action}}
-            {{#paper-button mini=true onClick=(action "changeGMMode" true)}}
-              {{paper-icon "filter_b_and_w"}}
-            {{/paper-button}}
-          {{/actions.action}}
-
-          {{#actions.action}}
-            {{#paper-button mini=true onClick=(action "changeNormalMode" true)}}
-              {{paper-icon "flare"}}
-            {{/paper-button}}
-          {{/actions.action}}
-        {{/dial.actions}}
-      {{/paper-speed-dial}}
-    </div>
 </div>

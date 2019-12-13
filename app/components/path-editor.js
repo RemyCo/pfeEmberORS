@@ -30,7 +30,7 @@ export default Component.extend({
   preference: "recommended",
   profile: "cycling-regular",
 
-  tileUrl: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+  tileUrl: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
 
   isEnabled: computed('polyline.@each.lat', 'polyline.@each.lon', function () {
     if (this.get('polylineRecommended').length > 1){
@@ -72,7 +72,6 @@ export default Component.extend({
   durationSF: computed('durationFastest', function () {
     return Math.round(this.get('durationFastest')/60) + ' min';
   }),
-
   startPoint: computed('polylineRecommended', function () {
     return this.get('polylineRecommended').get('firstObject');
   }),
@@ -109,26 +108,6 @@ export default Component.extend({
       this.set('distanceFastest', 0);
       this.set('durationFastest', 0);
     },
-    changeDarkMode(){
-      this.set("tileUrl", "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png");
-    },
-    changeGMMode(){
-      this.set("tileUrl", "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png");
-    },
-    changeNormalMode(){
-      this.set("tileUrl", "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png");
-    },
-
-    /*
-    deleteLastPoint() {
-      this.get("polyline").popObject();
-    },
-    deleteLastSegment() {
-      if (this.get("previousIndex").length > 0) {
-        this.set("polyline", this.get("polyline").slice(0, this.get('previousIndex').pop()));
-      }
-    },
-    */
 
     addPolyline(latitude, longitude, altitude, polyline){
       let ctx = this;
@@ -181,7 +160,6 @@ export default Component.extend({
         });
         ctx.send("addPolyline", e.latlng.lat, e.latlng.lng,0, "polylineRecommended");
         ctx.send("addPolyline", e.latlng.lat, e.latlng.lng,0, "polylineFastest");
-        ctx.send("addPolyline", e.latlng.lat, e.latlng.lng,0, "polylineShortest");
         ctx.set("firstClick", true);
       } else if (!this.get("lastClick")){
         url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + e.latlng.lat + "&lon=" + e.latlng.lng + "&zoom=18&addressdetails=1";
@@ -193,7 +171,6 @@ export default Component.extend({
             ctx.set("secondAddress", data.display_name);
         });
         ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, preference, profile, "polylineRecommended");
-        //ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "shortest", profile, "polylineShortest");
         ctx.send("pathCreation", e.latlng.lat, e.latlng.lng, "fastest", profile, "polylineFastest");
       }
     },
@@ -207,7 +184,6 @@ export default Component.extend({
         .then(function(response) { return response.json(); })
         .then(function(data){
           ctx.send("addPolyline", data[0].lat, data[0].lon, 0, "polylineRecommended");
-          ctx.send("addPolyline", data[0].lat, data[0].lon, 0, "polylineFastest");
           ctx.send("addPolyline", data[0].lat, data[0].lon, 0, "polylineShortest");
           ctx.set("firstClick", true);
           ctx.set("lat", data[0].lat);
@@ -234,13 +210,11 @@ export default Component.extend({
             let profile = ctx.get('profile');
             // Calling ORS for a polyline segment joining the given two coordinates
             ctx.send("pathCreation", data[0].lat, data[0].lon, "recommended", profile, "polylineRecommended");
-            ctx.send("pathCreation", data[0].lat, data[0].lon, "shortest", profile, "polylineShortest");
             ctx.send("pathCreation", data[0].lat, data[0].lon, "fastest", profile, "polylineFastest");
           });
         } else {
           ctx.set("polylineRecommended", A([ctx.get("polylineRecommended").firstObject]));
           ctx.set("polylineFastest", A([ctx.get("polylineFastest").firstObject]));
-          ctx.set("polylineShortest", A([ctx.get("polylineShortest").firstObject]));
           ctx.set("lastClick", false);
           ctx.send("searchSecondAddress");
         }
