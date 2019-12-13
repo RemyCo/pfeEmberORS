@@ -1,9 +1,22 @@
 {{! Third div to display the core of the component: buttons + map }}
 <div class="window">
   {{! left column to contain the button to interact with the path drawn on top of the map }}
-
   <div class="tool">
-   
+    <div class="grid">
+        {{#paper-switch value=booleanProp1 onChange=(action (mut booleanProp1))}}
+          Itinéraire sécurisé
+        {{/paper-switch}}
+        <div class="start">
+          {{paper-input placeholder="Adresse de départ" type="text" value=firstAddress onChange=(action (mut firstAddress))}}
+          {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
+        </div>
+
+        <div class="finish">
+          {{paper-input placeholder="Adresse d'arrivée" type="text" value=secondAddress onChange=(action (mut secondAddress))}}
+          {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
+        </div>
+    </div>
+
   </div>
 
 
@@ -12,54 +25,42 @@
   <div class="map">
     {{! Event click and move are mapped on Ember action }}
     {{#leaflet-map lat=lat lng=lng zoom=zoom onMoveend=(action "updateCenter") onClick=(action "onMapClick")}}
-      {{! Map layer is using OpenStreetMap data }}
-      {{tile-layer url=tileUrl}}
-      {{! Marker layer is composed of a marker for the first point binded with startPoint attribute and a polyline layer binded with polyline attribute }}
-      {{#if firstClick}}
-        {{marker-layer location=startPoint}}
-      {{/if}}
-      {{#if lastClickRecommended}}
-        {{marker-layer location=endPoint}}
-        {{#marker-layer location=middlePointRecommended}}
-          {{#popup-layer}}
-            <h3>Recommended :</h3>
-            <h4>{{durationSR}}</h4>
-            <p>{{distanceKmR}}</p>
-          {{/popup-layer}}
-        {{/marker-layer }}
-      {{/if}}
-      {{#if lastClickFastest}}
-        {{#marker-layer location=middlePointFastest}}
-          {{#popup-layer}}
-            <h3>Fastest :</h3>
-            <h4>{{durationSF}}</h4>
-            <p>{{distanceKmF}}</p>
-          {{/popup-layer}}
-        {{/marker-layer }}
-      {{/if}}
-      {{!polyline-layer locations=polyline color="#000000"  to be able to change the color of the polyline}}
-      {{polyline-layer locations=polylineRecommended }}
-      {{!polyline-layer locations=polylineShortest color="#FF0000" }}
-      {{polyline-layer locations=polylineFastest color="#00FF00" }}
+    {{! Map layer is using OpenStreetMap data }}
+    {{tile-layer url=tileUrl}}
+    {{! Marker layer is composed of a marker for the first point binded with startPoint attribute and a polyline layer binded with polyline attribute }}
+    {{#if firstClick}}
+    {{marker-layer location=startPoint}}
+    {{/if}}
+    {{#if lastClickRecommended}}
+    {{marker-layer location=endPoint}}
+    {{#marker-layer location=middlePointRecommended}}
+    {{#popup-layer}}
+    <h3>Recommended :</h3>
+    <h4>{{durationSR}}</h4>
+    <p>{{distanceKmR}}</p>
+    {{/popup-layer}}
+    {{/marker-layer }}
+    {{/if}}
+    {{#if lastClickFastest}}
+    {{#marker-layer location=middlePointFastest}}
+    {{#popup-layer}}
+    <h3>Fastest :</h3>
+    <h4>{{durationSF}}</h4>
+    <p>{{distanceKmF}}</p>
+    {{/popup-layer}}
+    {{/marker-layer }}
+    {{/if}}
+    {{!polyline-layer locations=polyline color="#000000"  to be able to change the color of the polyline}}
+    {{polyline-layer locations=polylineRecommended }}
+    {{!polyline-layer locations=polylineShortest color="#FF0000" }}
+    {{polyline-layer locations=polylineFastest color="#00FF00" }}
 
     {{/leaflet-map}}
   </div>
 
-   <div class="leaflet-top leaflet-left">
-    {{paper-input placeholder="Address" type="text" value=firstAddress onChange=(action (mut firstAddress)) icon="place"}}
-    {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
-    {{paper-input placeholder="Address" type="text" value=secondAddress onChange=(action (mut secondAddress)) icon="place"}}
-    {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
-    {{! Button to reset the path}}
-    {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
-      {{paper-icon "delete" size=24}}
-    {{/paper-button}}
+  <div class="leaflet-bottom leaflet-right">
+    {{#paper-speed-dial
+        open=open onToggle=(action (mut open)) as |dial|}}
+    {{/paper-speed-dial}}
   </div>
-
-  <div class="leaflet-top leaflet-right">
-    {{#paper-button mini=true onClick="location.href='google.fr';"}}
-      {{paper-icon "icon"}}
-    {{/paper-button}}
-  </div>
-
 </div>

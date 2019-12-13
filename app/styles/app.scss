@@ -23,26 +23,44 @@ md-input-container {
   margin: 0;
 }
 
-#ember237 {
-  display: block;
+.leaflet-left {
+  left: auto;
   right: 0;
-  left: 0;
-  margin: auto;
+}
+
+.leaflet-left .leaflet-control {
+  margin-right: 10px;
+  margin-left: 0px;
 }
 
 @media only screen and (min-width: 1024px) {
   .tool {
+    min-width: 25vw;
     bottom: auto;
+    background-color: white;
+    right: auto;
+    left: auto;
+    padding: 30px;
+    margin: 15px;
+    border-radius: 20px;
   }
+
 
   md-input-container {
-    margin: 18px 0;
+    display: inline-block;
+    width: 80%;
+    margin: 0px 0;
   }
 
-  #ember237 {
-    display: unset;
-    right: unset;
-    left: unset;
-    margin: unset;
+  md-input-container input {
+    text-align: center;
+  }
+
+  md-input-container input::after {
+    content: 'hey';
+    position: absolute;
+    top: 0;
+    width: 20px;
+    height: 20px;
   }
 }
