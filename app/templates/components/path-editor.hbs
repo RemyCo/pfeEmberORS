@@ -17,22 +17,10 @@
         </div>
     </div>
 
-    {{! Button to reset the path}}
-    {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
-    {{paper-icon "delete" size=24}}
-    {{/paper-button}}
-
-    <!--    Other Buttons that we have before
-    {{! Button to delete just the last point added to path }}
-    {{#paper-button iconButton=true disabled=isEnabled onClick=(action "deleteLastPoint")}}{{paper-icon "reply"}}{{/paper-button}}
-    {{! Button to delete the last segment added to the path }}
-    {{#paper-button iconButton=true disabled=isEnabled onClick=(action "deleteLastSegment")}}{{paper-icon "reply all"}}{{/paper-button}}
-    {{! Display the full distance in km for the currently drawn path thanks to the bind attribute }}
-    {{distance}}
-    {{duration}}
-    -->
-
   </div>
+
+
+
   {{! Right column to contain the map}}
   <div class="map">
     {{! Event click and move are mapped on Ember action }}
