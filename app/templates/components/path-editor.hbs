@@ -4,7 +4,8 @@
   <div class="tool">
     <div class="grid">
       {{#paper-switch value=booleanProp1 onChange=(action (mut booleanProp1))}}
-        Itinéraire sécurisé
+        {{! t is used to internationalized the application }}
+        {{t 'securized_route'}}         
       {{/paper-switch}}
       <div class="start">
         {{paper-input placeholder="Adresse de départ" type="text" value=firstAddress onChange=(action (mut firstAddress))}}
@@ -15,13 +16,25 @@
         {{paper-input placeholder="Adresse d'arrivée" type="text" value=secondAddress onChange=(action (mut secondAddress))}}
         {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
       </div>
-    </div>
+      {{! Button to reset the path}}
+      {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
+        {{paper-icon "delete" size=24}}
+      {{/paper-button}}
 
+      <div class="choose">
+      {{#paper-button fab=true raised=true mini=true accent=true }}
+        {{paper-icon "alarm" size=24}}
+      {{/paper-button}}
+      {{#paper-button fab=true raised=true mini=true accent=true }}
+        {{paper-icon "android" size=24}}
+      {{/paper-button}}
+      </div>
+    </div>
   </div>
 
 
 
-  {{! Right column to contain the map}}
+  {{! Right column to contain the map }}
   <div class="map">
     {{! Event click and move are mapped on Ember action }}
     {{#leaflet-map lat=lat lng=lng zoom=zoom onMoveend=(action "updateCenter") onClick=(action "onMapClick")}}
@@ -50,9 +63,7 @@
           {{/popup-layer}}
      {{/marker-layer }}
       {{/if}}
-      {{!polyline-layer locations=polyline color="#000000"  to be able to change the color of the polyline}}
       {{polyline-layer locations=polylineRecommended }}
-      {{!polyline-layer locations=polylineShortest color="#FF0000" }}
       {{polyline-layer locations=polylineFastest color="#00FF00" }}
 
     {{/leaflet-map}}
