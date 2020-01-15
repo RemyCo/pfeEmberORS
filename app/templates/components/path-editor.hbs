@@ -3,10 +3,6 @@
   {{! left column to contain the button to interact with the path drawn on top of the map }}
   <div class="tool">
     <div class="grid">
-      {{#paper-switch value=booleanProp1 onChange=(action (mut booleanProp1))}}
-        {{! t is used to internationalized the application }}
-        {{t 'securized_route'}}         
-      {{/paper-switch}}
       <div class="start">
         {{paper-input placeholder="Adresse de départ" type="text" value=firstAddress onChange=(action (mut firstAddress))}}
         {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
@@ -17,18 +13,9 @@
         {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
       </div>
       {{! Button to reset the path}}
-      {{#paper-button fab=true raised=true mini=true accent=true onClick=(action "deleteAll")}}
+      {{#paper-button mini=true accent=true onClick=(action "deleteAll")}}
         {{paper-icon "delete" size=24}}
       {{/paper-button}}
-
-      <div class="choose">
-      {{#paper-button fab=true raised=true mini=true accent=true }}
-        {{paper-icon "alarm" size=24}}
-      {{/paper-button}}
-      {{#paper-button fab=true raised=true mini=true accent=true }}
-        {{paper-icon "android" size=24}}
-      {{/paper-button}}
-      </div>
     </div>
   </div>
 
@@ -48,7 +35,7 @@
         {{marker-layer location=endPoint}}
         {{#marker-layer location=middlePointRecommended}}
           {{#popup-layer}}
-            <h3>{{t 'profile.recommanded'}}</h3>
+            <h3>{{t "profile.recommanded"}}</h3>
             <h4>{{durationSR}}</h4>
             <p>{{distanceKmR}}</p>
           {{/popup-layer}}
@@ -57,7 +44,7 @@
       {{#if lastClickFastest}}
         {{#marker-layer location=middlePointFastest}}
           {{#popup-layer}}
-            <h3>{{t 'profile.fastest' }}</h3>
+            <h3>{{t "profile.fastest" }}</h3>
             <h4>{{durationSF}}</h4>
             <p>{{distanceKmF}}</p>
           {{/popup-layer}}
