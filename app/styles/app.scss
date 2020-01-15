@@ -35,8 +35,9 @@ md-input-container {
 }
 
 .info-button {
+  position: relative;
   margin-bottom: 10px;
-  z-index: 1;
+  z-index: 999;
 }
 
 @media only screen and (min-width: 1024px) {
