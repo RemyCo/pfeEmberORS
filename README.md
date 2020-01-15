@@ -18,9 +18,19 @@ You will need the following things properly installed on your computer.
 
 ## Installation
 
-* `git clone <https://github.com/RemyCo/pfeEmberORS.git>`
-* `cd path-editor`
-* `npm install`
+```bash
+# Clone this repository
+$ git clone https://github.com/RemyCo/pfeEmberORS.git
+
+# Go into the repository
+$ cd path-editor
+
+# Install dependencies
+$ npm install
+
+# Run the app
+$ ember s
+```
 
 ## Running / Development
 
