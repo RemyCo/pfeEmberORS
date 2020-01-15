@@ -19,14 +19,20 @@
     </div>
   </div>
 
-
+  <div class="leaflet-bottom leaflet-right">
+    <div class="grid">
+      <div class="info-button">
+        {{#paper-button iconButton=true href="http://emberjs.com/images/tomsters/original.png" target="_blank"}}{{paper-icon "info"}}{{/paper-button}}
+      </div>
+    </div>
+  </div>
 
   {{! Right column to contain the map }}
   <div class="map">
     {{! Event click and move are mapped on Ember action }}
     {{#leaflet-map lat=lat lng=lng zoom=zoom onMoveend=(action "updateCenter") onClick=(action "onMapClick")}}
       {{! Map layer is using OpenStreetMap data }}
-      {{tile-layer url=tileUrl}}
+      {{tile-layer url=tileUrl attribution=attribution}}
       {{! Marker layer is composed of a marker for the first point binded with startPoint attribute and a polyline layer binded with polyline attribute }}
       {{#if firstClick}}
         {{marker-layer location=startPoint}}
@@ -55,5 +61,4 @@
 
     {{/leaflet-map}}
   </div>
-
 </div>
