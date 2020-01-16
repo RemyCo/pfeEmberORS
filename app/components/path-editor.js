@@ -24,6 +24,9 @@ export default Component.extend({
   firstAddress: "",
   secondAddress: "",
 
+  visibilityFastest: true,
+  visibilityRecommended: false,
+
   firstAddressLat: 0,
   firstAddressLon: 0,
 
@@ -221,5 +224,19 @@ export default Component.extend({
         }
       }
     },
+
+    setVisibilityRecommended(){
+      let ctx = this;
+      ctx.set("visibilityFastest", false);
+      ctx.set("visibilityRecommended", true);
+    },
+
+    setVisibilityFastest(){
+      let ctx = this;
+      ctx.set("visibilityFastest", true);
+      ctx.set("visibilityRecommended", false);
+    },
+
+
   },
 });
