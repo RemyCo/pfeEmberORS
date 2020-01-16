@@ -16,6 +16,13 @@
   box-shadow: 10px 10px 10px 2px rgba(0, 0, 0, .3);
 }
 
+.info{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+}
+
 .map{
   z-index:0;
 }
@@ -37,7 +44,6 @@ md-input-container {
 .info-button {
   position: relative;
   margin-bottom: 10px;
-  z-index: 999;
 }
 
 .wrapper{
@@ -137,4 +143,9 @@ md-input-container {
     width: 20px;
     height: 20px;
   }
+}
+
+
+.body-mentions {
+  margin: 10vh;
 }

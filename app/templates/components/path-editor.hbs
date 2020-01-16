@@ -36,11 +36,11 @@
     </div>
   </div>
 
-  <div class="leaflet-bottom leaflet-right">
-    <div class="grid">
-      <div class="info-button">
-        {{#paper-button iconButton=true href="http://emberjs.com/images/tomsters/original.png" target="_blank"}}{{paper-icon "info"}}{{/paper-button}}
-      </div>
+  <div class="info">
+    <div class="info-button">
+      {{#link-to "mentions" class="button"}}
+        {{#paper-button iconButton=true target="_blank"}}{{paper-icon "info"}}{{/paper-button}}
+      {{/link-to}}
     </div>
   </div>
 
