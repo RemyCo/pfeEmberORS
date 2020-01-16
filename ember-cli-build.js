@@ -7,7 +7,7 @@ module.exports = function(defaults) {
 	// Add options here
 	'ember-cli-favicon': {
 		enabled: true // always
-	}
+  },
   });
 
 

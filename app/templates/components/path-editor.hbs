@@ -1,3 +1,8 @@
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 {{! Third div to display the core of the component: buttons + map }}
 <div class="window">
   {{! left column to contain the button to interact with the path drawn on top of the map }}
@@ -13,17 +18,29 @@
         {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
       </div>
       {{! Button to reset the path}}
-      {{#paper-button mini=true accent=true onClick=(action "deleteAll")}}
+      {{#paper-button iconButton=true onClick=(action "deleteAll")}}
         {{paper-icon "delete" size=24}}
       {{/paper-button}}
+
+      <div class="wrapper">
+        <form class="toggle_radio">
+          <input type="radio" class="toggle_option" id="first_toggle" name="toggle_option_1" {{action "setVisibilityFastest"}} checked="checked">
+          <input type="radio" class="toggle_option" id="second_toggle" name="toggle_option_2" {{action "setVisibilityRecommended"}}>
+          <label for="first_toggle"><p>{{t "profile.fastest"}}</p></label>
+          <label for="second_toggle"><p>{{t "profile.recommended"}}</p></label>
+          <div class="toggle_option_slider">
+          </div>
+        </form>
+      </div>
+
     </div>
   </div>
 
-  <div class="leaflet-bottom leaflet-right">
-    <div class="grid">
-      <div class="info-button">
-        {{#paper-button iconButton=true href="http://emberjs.com/images/tomsters/original.png" target="_blank"}}{{paper-icon "info"}}{{/paper-button}}
-      </div>
+  <div class="info">
+    <div class="info-button">
+      {{#link-to "mentions" class="button"}}
+        {{#paper-button iconButton=true target="_blank"}}{{paper-icon "info"}}{{/paper-button}}
+      {{/link-to}}
     </div>
   </div>
 
@@ -39,25 +56,34 @@
       {{/if}}
       {{#if lastClickRecommended}}
         {{marker-layer location=endPoint}}
-        {{#marker-layer location=middlePointRecommended}}
-          {{#popup-layer}}
-            <h3>{{t "profile.recommended"}}</h3>
-            <h4>{{durationSR}}</h4>
-            <p>{{distanceKmR}}</p>
-          {{/popup-layer}}
-     {{/marker-layer }}
+        {{#if visibilityRecommended}}
+          {{#marker-layer location=middlePointRecommended}}
+            {{#popup-layer}}
+              <h5>{{t "profile.recommended"}}</h5>
+              <h6>{{durationSR}}</h6>
+              <p>{{distanceKmR}}</p>
+            {{/popup-layer}}
+          {{/marker-layer }}
+        {{/if}}
       {{/if}}
       {{#if lastClickFastest}}
-        {{#marker-layer location=middlePointFastest}}
-          {{#popup-layer}}
-            <h3>{{t "profile.fastest" }}</h3>
-            <h4>{{durationSF}}</h4>
-            <p>{{distanceKmF}}</p>
-          {{/popup-layer}}
-     {{/marker-layer }}
+        {{#if visibilityFastest}}
+          {{#marker-layer location=middlePointFastest}}
+            {{#popup-layer}}
+              <h5>{{t "profile.fastest" }}</h5>
+              <h6>{{durationSF}}</h6>
+              <p>{{distanceKmF}}</p>
+            {{/popup-layer}}
+          {{/marker-layer }}
+        {{/if}}
       {{/if}}
-      {{polyline-layer locations=polylineRecommended }}
-      {{polyline-layer locations=polylineFastest color="#00FF00" }}
+      {{#if visibilityRecommended}}
+        {{polyline-layer locations=polylineRecommended }}
+      {{/if}}
+
+      {{#if visibilityFastest}}
+        {{polyline-layer locations=polylineFastest color="#00FF00" }}
+      {{/if}}
 
     {{/leaflet-map}}
   </div>
