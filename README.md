@@ -1,7 +1,8 @@
 # PFE Ember ORS
 
-![Version](https://img.shields.io/badge/version-1.0-green.svg)
-[![Contributors](https://img.shields.io/badge/contributors-Rémy%20Coquard%20+%20Maxence%20Bouet-blue.svg)](https://github.com/RemyCo/pfeEmberORS/graphs/contributors)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/RemyCo/pfeEmberORS)
+![GitHub last commit](https://img.shields.io/github/last-commit/RemyCo/pfeEmberORS)
+[![Contributors](https://img.shields.io/badge/contributors-Rémy%20Coquard%20+%20Maxence%20Bouet-orange.svg)](https://github.com/RemyCo/pfeEmberORS/graphs/contributors)
 
 ![pfeEmberORS](img/Preview.jpg)
 
