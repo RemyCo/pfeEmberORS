@@ -1,3 +1,8 @@
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 {{! Third div to display the core of the component: buttons + map }}
 <div class="window">
   {{! left column to contain the button to interact with the path drawn on top of the map }}
@@ -16,6 +21,18 @@
       {{#paper-button mini=true accent=true onClick=(action "deleteAll")}}
         {{paper-icon "delete" size=24}}
       {{/paper-button}}
+
+      <div class="wrapper">
+        <div class="toggle_radio">
+          <input type="radio" checked class="toggle_option" id="first_toggle" name="toggle_option">
+          <input type="radio" class="toggle_option" id="second_toggle" name="toggle_option">
+          <label for="first_toggle"><p>{{t "profile.fastest"}}</p></label>
+          <label for="second_toggle"><p>{{t "profile.recommended"}}</p></label>
+          <div class="toggle_option_slider">
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
