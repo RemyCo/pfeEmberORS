@@ -6,9 +6,9 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/RemyCo/pfeEmberORS)
 [![Contributors](https://img.shields.io/badge/contributors-Rémy%20Coquard%20+%20Maxence%20Bouet%20+%20Alex%20Manceau-orange.svg)](https://github.com/RemyCo/pfeEmberORS/graphs/contributors)
 
-![pfeEmberORS](img/Preview.jpg)
+![pfeEmberORS](img/Preview-Final.jpg)
 
-This project, in charge for the city of Angers in France, was made for a PFE, a graduation project. It is a cyclist route calculator, to be put in the app of the city of Angers later. The server side use ORS, and the client side use Ember and Leaflet to properly make the route calculator. 
+This project, in charge for the city of Angers in France, was made for a PFE, a graduation project. It is a cyclist route calculator, to be put in the app of the city of Angers later. The server side use ORS, and the client side use Ember and Leaflet to properly make the route calculator.
 
 ## Prerequisites
 
