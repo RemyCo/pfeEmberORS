@@ -212,8 +212,9 @@ export default Component.extend({
           .then(function(response) { return response.json(); })
           .then(function(data){
             let profile = ctx.get('profile');
+            let preference = this.get('preference');
             // Calling ORS for a polyline segment joining the given two coordinates
-            ctx.send("pathCreation", data[0].lat, data[0].lon, "recommended", profile, "polylineRecommended");
+            ctx.send("pathCreation", data[0].lat, data[0].lon, preference, profile, "polylineRecommended");
             ctx.send("pathCreation", data[0].lat, data[0].lon, "fastest", profile, "polylineFastest");
           });
         } else {

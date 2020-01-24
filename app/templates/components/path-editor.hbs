@@ -9,12 +9,12 @@
   <div class="tool">
     <div class="grid">
       <div class="start">
-        {{paper-input placeholder="Adresse de départ" type="text" value=firstAddress onChange=(action (mut firstAddress))}}
+        {{paper-input placeholder="Adresse de départ" type="text" value=firstAddress onChange=(action (mut firstAddress))}}   {{! We can't internationalize the placeholder}}
         {{#paper-button iconButton=true onClick=(action "searchFirstAddress")}}{{paper-icon "search"}}{{/paper-button}}
       </div>
 
       <div class="finish">
-        {{paper-input placeholder="Adresse d'arrivée" type="text" value=secondAddress onChange=(action (mut secondAddress))}}
+        {{paper-input placeholder="Adresse d'arrivée" type="text" value=secondAddress onChange=(action (mut secondAddress))}}   {{! We can't internationalize the placeholder}}
         {{#paper-button iconButton=true onClick=(action "searchSecondAddress")}}{{paper-icon "search"}}{{/paper-button}}
       </div>
       {{! Button to reset the path}}
@@ -27,7 +27,7 @@
           <input type="radio" class="toggle_option" id="first_toggle" name="toggle_option_1" {{action "setVisibilityFastest"}} checked="checked">
           <input type="radio" class="toggle_option" id="second_toggle" name="toggle_option_2" {{action "setVisibilityRecommended"}}>
           <label for="first_toggle"><p>{{t "profile.fastest"}}</p></label>
-          <label for="second_toggle"><p>{{t "profile.recommended"}}</p></label>
+          <label for="second_toggle"><p>{{t "profile.safest"}}</p></label>
           <div class="toggle_option_slider">
           </div>
         </form>
@@ -52,37 +52,37 @@
       {{tile-layer url=tileUrl attribution=attribution}}
       {{! Marker layer is composed of a marker for the first point binded with startPoint attribute and a polyline layer binded with polyline attribute }}
       {{#if firstClick}}
-        {{marker-layer location=startPoint}}
+        {{marker-layer location=startPoint icon=(icon iconUrl="/marker-icons/start.svg" iconSize=(point 120 120) iconAnchor=(point 57 82))}}
       {{/if}}
       {{#if lastClickRecommended}}
-        {{marker-layer location=endPoint}}
+        {{marker-layer location=endPoint icon=(icon iconUrl="/marker-icons/end.svg" iconSize=(point 120 120) iconAnchor=(point 57 82))}}
         {{#if visibilityRecommended}}
-          {{#marker-layer location=middlePointRecommended}}
+          {{#marker-layer location=middlePointRecommended icon=(icon iconUrl="/marker-icons/middle.svg" iconSize=(point 120 120) iconAnchor=(point 57 90) popupAnchor=(point 100 0))}}
             {{#popup-layer}}
-              <h5>{{t "profile.recommended"}}</h5>
+              <h5>{{t "profile.safest"}}</h5>
               <h6>{{durationSR}}</h6>
               <p>{{distanceKmR}}</p>
             {{/popup-layer}}
-          {{/marker-layer }}
+       {{/marker-layer }}
         {{/if}}
       {{/if}}
       {{#if lastClickFastest}}
         {{#if visibilityFastest}}
-          {{#marker-layer location=middlePointFastest}}
+          {{#marker-layer location=middlePointFastest icon=(icon iconUrl="/marker-icons/middle.svg" iconSize=(point 120 120) iconAnchor=(point 57 90) popupAnchor=(point 0 -55))}}
             {{#popup-layer}}
               <h5>{{t "profile.fastest" }}</h5>
               <h6>{{durationSF}}</h6>
               <p>{{distanceKmF}}</p>
             {{/popup-layer}}
-          {{/marker-layer }}
+       {{/marker-layer }}
         {{/if}}
       {{/if}}
       {{#if visibilityRecommended}}
-        {{polyline-layer locations=polylineRecommended }}
+        {{polyline-layer locations=polylineRecommended color="#63cf7e" }}
       {{/if}}
 
       {{#if visibilityFastest}}
-        {{polyline-layer locations=polylineFastest color="#00FF00" }}
+        {{polyline-layer locations=polylineFastest color="#73a5d4" }}
       {{/if}}
 
     {{/leaflet-map}}
