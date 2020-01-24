@@ -1,11 +1,11 @@
 # PFE Ember ORS
 
 
-![GitHub release (latest by date excluding pre-releases)](https://img.shields.io/github/v/release/RemyCo/pfeEmberORS?color=brightgreen)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/RemyCo/pfeEmberORS?include_prereleases&label=pre-release&color=lightgreen)
-![GitHub last commit](https://img.shields.io/github/last-commit/RemyCo/pfeEmberORS?color=orange)
+[![GitHub release (latest by date excluding pre-releases)](https://img.shields.io/github/v/release/RemyCo/pfeEmberORS?color=brightgreen)](https://github.com/RemyCo/pfeEmberORS/releases)
+[![GitHub beta release](https://img.shields.io/github/v/release/RemyCo/pfeEmberORS?include_prereleases&label=pre-release&color=lightgreen)](https://github.com/RemyCo/pfeEmberORS/releases)
+[![GitHub last commit](https://img.shields.io/github/last-commit/RemyCo/pfeEmberORS?color=orange)](https://github.com/RemyCo/pfeEmberORS/commits/master)
 [![Contributors](https://img.shields.io/badge/contributors-Rémy%20Coquard%20+%20Maxence%20Bouet%20+%20Alex%20Manceau-blue.svg)](https://github.com/RemyCo/pfeEmberORS/graphs/contributors)
-![GitHub](https://img.shields.io/github/license/RemyCo/PFEEmberORS?color=red)
+[![License](https://img.shields.io/github/license/RemyCo/PFEEmberORS?color=red)](https://github.com/RemyCo/pfeEmberORS/blob/master/LICENSE)
 
 ![pfeEmberORS](img/Preview-Final.jpg)
 
