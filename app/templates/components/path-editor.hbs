@@ -57,7 +57,7 @@
       {{#if lastClickRecommended}}
         {{marker-layer location=endPoint icon=(icon iconUrl="/marker-icons/end.svg" iconSize=(point 120 120) iconAnchor=(point 57 82))}}
         {{#if visibilityRecommended}}
-          {{#marker-layer location=middlePointRecommended icon=(icon iconUrl="/marker-icons/middle.svg" iconSize=(point 120 120) iconAnchor=(point 57 90) popupAnchor=(point 100 0))}}
+          {{#marker-layer location=middlePointRecommended icon=(icon iconUrl="/marker-icons/middle.svg" iconSize=(point 120 120) iconAnchor=(point 57 90) popupAnchor=(point 0 -55))}}
             {{#popup-layer}}
               <h5>{{t "profile.safest"}}</h5>
               <h6>{{durationSR}}</h6>
